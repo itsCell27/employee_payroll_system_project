@@ -41,9 +41,9 @@ void wait_clean(); //clears console after user press any key
 void login_system();
 
 // employee menu
-void user();             
+void user(User* user);             
 void user_payslip();
-void user_info_update();
+void user_info_update(User* user);
 
 // admin menu
 void admin();
@@ -208,12 +208,13 @@ void login_system(){
 
 
 // Function for the user menu
-void user(){
+void user(User* user){
 	
 	char choice;
 	
 	do{
 		//design
+		printf("\n\n\n\t\t*** Welcome: %s ***\n\n", user->usernames);                 //need I rework ung design 
 		printf("\n**********************************************************\n");
     	printf("*                                                        *\n");
     	printf("*                      Employee Menu                     *\n");
@@ -221,8 +222,7 @@ void user(){
     	printf("**********************************************************\n");
     	printf("*                                                        *\n");
     	printf("*    [A] View Payslip                                    *\n");
-    	printf("*    [B] Change Password                                 *\n");
-    	printf("*    [C] Update personal info                            *\n");
+    	printf("*    [B] Update personal info                            *\n");
     	printf("*    [X] Logout                                          *\n");
     	printf("*                                                        *\n");
     	printf("**********************************************************\n");
@@ -237,7 +237,7 @@ void user(){
     			user_payslip();
     			break;
     		case 'B':
-    			user_info_update();
+    			user_info_update(user);
     			break;
     		case 'C':
     			printf("\nN/a\n");
@@ -292,7 +292,7 @@ void user_payslip(){
 	
 }
 
-void user_info_update(){
+void user_info_update(User* user){
 	
 	char choice;
 	
@@ -300,6 +300,17 @@ void user_info_update(){
 	
 	do{
 		//design
+		// need I rework ung design magmula dito
+		printf("\n\n\n\tUser Information\n");
+    	printf("------------------------------------\n");
+    	printf("\tUsername: %s\n", user->usernames);
+    	printf("\tName: %s\n", user->names);
+    	printf("\tPosition: %s\n", user->positions);
+    	printf("\tContact: %d\n", user->contacts);
+    	printf("------------------------------------\n");
+    	// hanggang dito
+    	
+    	
 		printf("\n**********************************************************\n");
     	printf("*                                                        *\n");
     	printf("*               Update Personal Information              *\n");
@@ -309,6 +320,7 @@ void user_info_update(){
     	printf("*    [A] Full Name                                       *\n");
     	printf("*    [B] Address                                         *\n");
     	printf("*    [C] Contact                                         *\n");
+    	printf("*    [D] Change Password                                 *\n");
     	printf("*    [X] Back                                            *\n");
     	printf("*                                                        *\n");
     	printf("**********************************************************\n");
@@ -326,6 +338,9 @@ void user_info_update(){
     			printf("\nN/a\n");
     			break;
     		case 'C':
+    			printf("\nN/a\n");
+    			break;
+    		case 'D':
     			printf("\nN/a\n");
     			break;
     		case 'X':
@@ -429,6 +444,7 @@ void admin_manage(){
 	
 }
 
+// register's new employee "ONLY ADMIN CAN REGISTER"
 void add_employee(){
 	
 	clean();
@@ -438,6 +454,7 @@ void add_employee(){
         return;
     }
 
+	// need I-rework design
     printf("\n\t\tRegister New Employee\n\n");
     
     printf("\tUsername: ");
