@@ -19,7 +19,11 @@ typedef struct{
 	char names[MAX_CHAR];
 	char positions[MAX_CHAR];
 	int contacts;
-	int userTypes; // 0 for employee, 1 for admin
+	float work_hours;      // total number of hours worked.
+	float hourly_rates;    // pay per hour
+	float overtime_rates;  // overtime pay per hour
+	float overtime_hours;  //  total number of overtime in hours worked.
+	int userTypes;         // 0 for employee, 1 for admin
 } User;
 
 // Global arrays to store usernames, passwords, and user types
@@ -34,8 +38,8 @@ void main_menu();
 
 
 User* find_user(const char *username); // Function to check if the username exists
-void clean(); //clears console
-void wait_clean(); //clears console after user press any key
+void clean();                          //clears console
+void wait_clean();                     //clears console after user press any key
 
 
 void login_system();
@@ -50,7 +54,9 @@ void admin();
 void admin_manage();
 void add_employee();
 
+// salary computations
 
+float calculate_gross_pay(User* user); // calculates gross pay
 
 void main() {
 	
@@ -234,7 +240,7 @@ void user(User* user){
     	switch (choice){
     	
     		case 'A':
-    			user_payslip();
+    			user_payslip(user);
     			break;
     		case 'B':
     			user_info_update(user);
@@ -253,17 +259,44 @@ void user(User* user){
 	
 }
 
-void user_payslip(){
+void user_payslip(User* user){
 	
 	char choice;
+	
+	float user_gross_pay = calculate_gross_pay(user);
 	
 	clean();
 	
 	do{
-		//design
+		//design & display payslip
 		printf("\n**********************************************************\n");
     	printf("*                                                        *\n");
     	printf("*                      Salary Payslip                    *\n");
+    	printf("*                                                        *\n");
+    	printf("**********************************************************\n");
+    	printf("*                                                        *\n");
+    	printf("* Personal Information:                                  *\n");
+    	printf("*                                                        *\n");
+    	printf("* Username: %s\n", user->usernames);
+    	printf("* Name: %s\n", user->names);
+    	printf("* Position: %s\n", user->positions);
+    	printf("* Contact: %d\n", user->contacts);
+    	printf("*                                                        *\n");
+    	printf("**********************************************************\n");
+    	printf("*                                                        *\n");
+    	printf("* Regular Hours Worked: %.0f\n", user->work_hours);
+    	printf("* Hourly Rate: %.2f\n", user->hourly_rates);
+    	printf("* Overtime Hours Worked: %.0f\n", user->overtime_hours);
+    	printf("* Overtime Rate: %.2f\n", user->overtime_rates);
+    	printf("*                                                        *\n");
+    	printf("**********************************************************\n");
+    	printf("*                                                        *\n");
+    	printf("* Salary Before Deductions:                              *\n");
+    	printf("*                                                        *\n");
+    	printf("* Gross Pay: %.2f\n", user_gross_pay);
+    	printf("*                                                        *\n");
+    	printf("*                                                        *\n");
+    	printf("* Deductions:                                            *\n");
     	printf("*                                                        *\n");
     	printf("**********************************************************\n");
     	printf("*                                                        *\n");
@@ -472,6 +505,19 @@ void add_employee(){
     printf("\tContact: "); 
     scanf("%d", &users[numUsers].contacts);
     
+    printf("\n\n\t\tEmployee Salary Computation\n\n");
+    
+	printf("\tSet Rate Per Hour: "); 
+    scanf("%f", &users[numUsers].hourly_rates);
+    
+    printf("\tSet Overtime Rate Per Hour: "); 
+    scanf("%f", &users[numUsers].overtime_rates);
+    
+    printf("\tTotal number of hours worked (in a month): "); 
+    scanf("%f", &users[numUsers].work_hours);
+    
+    printf("\tTotal number of overtime hours worked (in a month): "); 
+    scanf("%f", &users[numUsers].overtime_hours);
     
     users[numUsers].userTypes = 0; // automatically set to employee
 
@@ -481,6 +527,15 @@ void add_employee(){
     
     wait_clean();
     
+}
+
+// gross pay computation
+float calculate_gross_pay(User* user){
+	
+	float gross_pay = (user->work_hours * user->hourly_rates) + (user->overtime_hours * user->overtime_rates);
+	
+	return gross_pay;
+	
 }
 
 //clears console
