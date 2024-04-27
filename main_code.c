@@ -46,7 +46,7 @@ void login_system();
 
 // employee menu
 void user(User* user);             
-void user_payslip();
+void user_payslip(User* user);
 void user_info_update(User* user);
 
 // admin menu
