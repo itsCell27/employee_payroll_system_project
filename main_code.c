@@ -1,5 +1,13 @@
-// Group 7
-
+////////////////////////////////////////////////////////////////////////////////////////
+//																					  //
+//																					  //
+// 		   					  Employee Payroll System								  //
+// 		   					  			by								              //
+// 		   					    Group 7echKnoLogist									  //
+//																					  //
+//																					  //
+//																					  //
+////////////////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
 #include <ctype.h>
@@ -42,6 +50,8 @@ int numUsers = 0;
 // Predefined admin credentials
 char adminUsername[] = "admin";
 char adminPassword[] = "admin123";
+char adminName[] = "ADMIN";
+char adminPosition[] = "Admin";
 
 void main_menu();                      // main-menu of employee payroll system
 
@@ -64,6 +74,7 @@ void user_info_update(User* user);	   // displays & allows change of employee in
 void admin(User* user);				   // admin main-menu
 void admin_manage();				   // menu to manage employees
 void add_employee();				   // register's new employee
+void delete_employee();                // for deleting a specific employee
 
 // salary computations
 float calculate_basic_salary(User* user);   // calculates basic salary
@@ -76,6 +87,8 @@ void main() {
     // Copy predefined admin account to array structure of "User"
     strcpy(users[0].usernames, adminUsername);
     strcpy(users[0].passwords, adminPassword);
+    strcpy(users[0].names, adminName);
+    strcpy(users[0].positions, adminPosition);
     users[0].userTypes = 1; // set to admin
     numUsers++;
     
@@ -456,23 +469,24 @@ void admin_manage(){
 	clean();
 	
 	do{
+		// Paayos ng display neto hindi pantay, magmula DITO.
 		//design
 		printf("\n**********************************************************\n");
-    	printf("*                                                        *\n");
-    	printf("*                   Manage Employees                     *\n");
-    	printf("*                                                        *\n");
+    	printf("|                                                        |\n");
+    	printf("|                   Manage Employees                     |\n");
+    	printf("|                                                        |\n");
     	printf("**********************************************************\n");
     	
-    	// Check if there are any users (employees) registered
+    	// Check if there are any user account 
     	if (numUsers == 0) {
     	
-        	printf("\n\nNo employees registered.\n");
+        	printf("\n\nNo account registered.\n");
         	
     	} else {
     		
-        	printf("\n\nEmployee List:\n");
+        	printf("\nEmployee List:\n");
         	printf("------------------------------------------------------------------------------------------------------------------\n");
-        	printf("ID\t Name\t\t\t Position\t\t Basic Salary\t\t Overtime\t\t Total Earnings\n");
+        	printf("ID\tName\t\tPosition\tBasic Salary\tOvertime\tBonus\t\tTotal Earnings\n");
         	printf("------------------------------------------------------------------------------------------------------------------\n");
 
         	// Loop through each user and display their details
@@ -484,20 +498,22 @@ void admin_manage(){
             	float gross_pay = calculate_gross_pay(&users[i]);
 
             	// Print employee details along with computed values
-            	printf("[%d]\t| %s\t\t| %s\t\t| %.2f\t\t| %.2f\t\t| %.2f\n", i, users[i].names, users[i].positions, basic_salary, overtime, gross_pay);
+            	printf("%d\t%s\t\t%s\t\t%.2f\t\t%.2f\t\t%.2f\t\t%.2f\n", i, users[i].names, users[i].positions, basic_salary, overtime, users[i].bonus, gross_pay);
             	
         	}
-        	printf("------------------------------------------------------------------------------------------------------------------\n\n\n");
+        	printf("------------------------------------------------------------------------------------------------------------------\n");
     	}
     	
     	printf("**********************************************************\n");
-    	printf("*                                                        *\n");
-    	printf("*    [A] Edit salary                                     *\n");
-    	printf("*    [B] Delete employee                                 *\n");
-    	printf("*    [C] Add employee                                    *\n");
-    	printf("*    [X] Back                                            *\n");
-    	printf("*                                                        *\n");
+    	printf("|                                                        |\n");
+    	printf("|    [A] Edit salary                                     |\n");
+    	printf("|    [B] Delete employee                                 |\n");
+    	printf("|    [C] Add employee                                    |\n");
+    	printf("|    [X] Back                                            |\n");
+    	printf("|                                                        |\n");
     	printf("**********************************************************\n");
+    	// hanggang DITO!
+    	
     	printf("\tEnter: ");
     	scanf(" %c", &choice);
     	choice = toupper(choice);
@@ -509,7 +525,7 @@ void admin_manage(){
     			printf("\nN/a\n");
     			break;
     		case 'B':
-    			printf("\nN/a\n");
+    			delete_employee();
     			break;
     		case 'C':
     			add_employee();
@@ -523,6 +539,70 @@ void admin_manage(){
 		}
 	}while(choice != 'X');
 	
+}
+
+// for deleting a specific employee
+void delete_employee() {
+	
+	int i;
+    clean(); // Clear console
+
+	// paayos ng design neto hindi pantay, magmula DITO!
+    printf("\n**********************************************************\n");
+    printf("|                                                        |\n");
+    printf("|                   Delete Employee                      |\n");
+    printf("|                                                        |\n");
+    printf("**********************************************************\n");
+
+    // Display employee list with IDs
+    if (numUsers == 0) {
+        printf("\nNo employees registered.\n");
+    } else {
+        printf("\nEmployee List:\n");
+        printf("------------------------------------------------------------------------------------------------------------------\n");
+        printf("ID\tName\t\tPosition\tBasic Salary\tOvertime\tBonus\t\tTotal Earnings\n");
+        printf("------------------------------------------------------------------------------------------------------------------\n");
+
+        // Loop through each user and display their details
+        for (i = 1; i < numUsers; i++) {
+        	
+        	// Calculate basic salary, overtime, and gross pay
+            float basic_salary = calculate_basic_salary(&users[i]);
+            float overtime = calculate_overtime(&users[i]);
+            float gross_pay = calculate_gross_pay(&users[i]);
+
+			// Print employee details along with computed values
+            printf("%d\t%s\t\t%s\t\t%.2f\t\t%.2f\t\t%.2f\t\t%.2f\n", i, users[i].names, users[i].positions, basic_salary, overtime, users[i].bonus, gross_pay);
+        }
+        printf("------------------------------------------------------------------------------------------------------------------\n");
+	// hanggang DITO!
+	
+	
+        // Prompt for employee ID to delete
+        printf("\nEnter the ID of the employee to delete: ");
+        int id;
+        scanf("%d", &id);
+        getchar(); // Consume the newline character left in the input buffer
+
+        // Validate ID
+        if (id >= 0 && id <= numUsers) {
+            // Check if the selected user is the admin
+            if (strcmp(users[id].usernames, "admin") == 0) {
+                printf("\nYou cannot delete the admin account.\n");
+            } else {
+                // Shift elements to remove the selected employee
+                for (i = id; i < numUsers - 1; i++) {
+                    users[i] = users[i + 1]; // Shifts the selected id number "i" to the last element of array
+                }
+                numUsers--; // Decrement the number of users
+                printf("\nEmployee deleted successfully.\n");
+            }
+        } else {
+            printf("\nInvalid employee ID.\n");
+        }
+    }
+
+    wait_clean(); // Wait for keypress and clear console
 }
 
 // register's new employee "ONLY ADMIN CAN REGISTER"
@@ -589,6 +669,7 @@ float calculate_basic_salary(User* user){
 	return basic_salary;
 }
 
+// overtime pay calculation
 float calculate_overtime(User* user){
 	
 	float overtime = user->overtime_hours * user->overtime_rates;
@@ -649,6 +730,7 @@ void change_password(User* user){
     
 }
 
+// for changing username
 void change_username(User* user){
 	
 	clean();
@@ -661,6 +743,7 @@ void change_username(User* user){
     wait_clean();
 }
 
+// for changing name
 void change_name(User* user){
 	
 	clean();
@@ -674,6 +757,7 @@ void change_name(User* user){
     wait_clean();
 }
 
+// for changing contact
 void change_contact(User* user){
 	
 	clean();
