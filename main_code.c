@@ -9,6 +9,8 @@
 //																					  //
 ////////////////////////////////////////////////////////////////////////////////////////
 
+
+//MAY BINAGO AKO SA CODE
 #include <stdio.h>
 #include <ctype.h>
 #include <conio.h>
@@ -102,7 +104,7 @@ int main() {
 // Function for the main menu
 void main_menu(){
 	
-	char choice;
+	int choice;
 	
 	do{
 		//design
@@ -112,29 +114,42 @@ void main_menu(){
     	printf("|                                                        |\n");
     	printf("|________________________________________________________|\n");
     	printf("|                                                        |\n");
-    	printf("|    [A] Login                                           |\n");
-    	printf("|    [X] Exit                                            |\n");
+    	printf("|    [1] Login                                           |\n");
+    	printf("|    [9] Exit                                            |\n");
     	printf("|                                                        |\n");
     	printf("|________________________________________________________|\n");
+    	
     	printf("\tEnter: ");
-    	scanf(" %c", &choice);
-    	choice = toupper(choice);
-    	getchar(); // Consume the newline character left in the input buffer
+    	
+    	// checks if user input's char or string
+        if (scanf("%d", &choice) != 1) {
+        	
+        	clean();
+            printf("\nInvalid input. Please enter a valid menu option.\n");
+            while (getchar() != '\n');
+			wait_clean();
+			
+            continue;
+        }
+
     
     	switch (choice){
     	
-    		case 'A':
+    		case 1:
     			login_system();
     			break;
-    		case 'X':
+    			
+    		case 9:
     			break;
+    			
     		default:
     			clean();
     			printf("\n\t\t\tnot in option\n");
     			wait_clean();
     			
 		}
-	}while(choice != 'X');
+		
+	}while(choice != 9);
 	
 }
 
@@ -178,7 +193,7 @@ void login_system(){
     		
     		do{
     			
-    			printf("\t\tPassword: ");
+    			printf("\t\t(Enter c to cancel)Password: ");
     			scanf("%s", password);
     			
     			int i;
@@ -772,6 +787,3 @@ void change_contact(User* user){
     
     wait_clean();
 }
-
-
-
