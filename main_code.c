@@ -22,37 +22,50 @@
 #define MAX_CHAR 100			 // maximum number of characters for other char types
 #define MAX_POSITION 50		 	 // maximum number of positions
 
+// position structure
+typedef struct{
+	
+	char position_name[MAX_CHAR];
+	float hourly_rates;    	 			// pay per hour
+	float overtime_rates;  	 			// overtime pay per hour
+	
+} Position;
 
 // Define user structure
 typedef struct{
 	
+	Position chosen_position; 			// To hold the chosen position for the user
+	
+	
 	char passwords[MAX_PASSWORD_LENGTH]; 		// password of the user
 	char usernames[MAX_USER_LENGTH];     		// username of the employee or admin   
 	char names[MAX_CHAR];				 	    // name of the employee
-	char positions[MAX_POSITION][MAX_CHAR];	 	// position of the employee
+	//char positions[MAX_POSITION][MAX_CHAR];	 	// position of the employee
 	int contacts;						 		// contact number of the employee
 	
 	
-	float work_hours;      				 		// total number of hours worked.
-	float hourly_rates[MAX_POSITION];    	 	// pay per hour
-	float overtime_rates[MAX_POSITION];  	 	// overtime pay per hour
-	float overtime_hours;  				 		// total number of overtime in hours worked.
-	float bonus;                         		// amount of bonus of the employee 
+	float work_hours;      				 		// total number of hours worked (in a Month).
+	float overtime_hours;  				 		// total number of overtime in hours worked (in a Month).
+	float bonus;                         		// amount of bonus of the employee (in a Month). 
 	
 	
-	int num_positions;					 // number of positions for this user
+	//int num_positions;					 // number of positions for this user
 	int userTypes;         				 // 0 for employee, 1 for admin
 	
 } User;
 
-// Global arrays to store usernames, passwords, and user types
-User users[MAX_USERS];
-int numUsers = 0;
 
-// Predefined admin credentials
+Position positions[MAX_POSITION]; 	    // Global arrays to store different employee positions
+User users[MAX_USERS];					// Global arrays to store employee account & information
+
+int numPositions = 0;					// Counts the total number different positions the admin has created
+int numUsers = 0;						// Counts the total number of registered employees
+
+
+// Predefined admin credentials 	   // THIS IS THE ADMIN DEFAULT USERNAME AND PASSWORD
 char adminUsername[] = "admin";        // admin username
 char adminPassword[] = "admin123";	   // admin password
-char adminName[] = "ADMIN";			   // admin name 
+
 
 void main_menu();                      // main-menu of employee payroll system
 
@@ -76,7 +89,7 @@ void admin(User* user);				   // admin main-menu
 void admin_manage(User* user);		   // menu to manage employees
 void add_employee();				   // register's new employee
 void delete_employee();                // for deleting a specific employee
-void add_position(User* user);		   // for adding different employee positions
+void add_position();		   		   // for adding different employee positions
 
 // salary computations
 float calculate_basic_salary(User* user);   // calculates basic salary
@@ -96,7 +109,6 @@ int main() {
     // Copy predefined admin account to array structure of "User"
     strcpy(users[0].usernames, adminUsername);
     strcpy(users[0].passwords, adminPassword);
-    strcpy(users[0].names, adminName);
     users[0].userTypes = 1; // set to admin
     numUsers++;
     
@@ -180,7 +192,7 @@ void login_system(){
     	
 
     	printf("\n\t\tLogin\n\n");
-    	printf("\t\tUsername: ");
+    	printf("\t\tEnter Username: ");
     	scanf("%s", username);
     
 
@@ -191,7 +203,7 @@ void login_system(){
     		
     		do{
     			
-    			printf("\t\tPassword: ");
+    			printf("\t\tEnter Password: ");
     			scanf("%s", password);
     		
 				if (strcmp(index->passwords, password) == 0) { // checks inputted password
@@ -329,15 +341,15 @@ void user_payslip(User* user){
     	printf("| Personal Information:                                  |\n");
     	printf("|                                                        |\n");
     	printf("| Employee Name: %s                                      |\n", user->names);
-    	printf("| Position: %s                                           |\n", user->positions[0]);
+    	printf("| Position: %s                                           |\n", user->chosen_position.position_name);
     	printf("| Contact: %d                                            |\n", user->contacts);
     	printf("|                                                        |\n");
     	printf("|________________________________________________________|\n");
     	printf("|                                                        |\n");
     	printf("| Regular Hours Worked: %.0f                             |\n", user->work_hours);
-    	printf("| Hourly Rate: %.2f                                      |\n", user->hourly_rates[0]);
+    	printf("| Hourly Rate: %.2f                                      |\n", user->chosen_position.hourly_rates);
     	printf("| Overtime Hours Worked: %.0f                            |\n", user->overtime_hours);
-    	printf("| Overtime Rate: %.2f                                    |\n", user->overtime_rates[0]);
+    	printf("| Overtime Rate: %.2f                                    |\n", user->chosen_position.overtime_rates);
     	printf("|                                                        |\n");
     	printf("|________________________________________________________|\n");
     	printf("|                                                        |\n");
@@ -388,14 +400,14 @@ void user_info_update(User* user){
 	do{
 		//design
 		// need I rework ung design magmula dito
-		printf(" _________________________________________\n");
-		printf("|\n\n\n\tUser Information                |\n");
-    	printf("|________________________________________|\n");
-    	printf("|\tUsername: %s                          |\n", user->usernames);
-    	printf("|\tName: %s                              |\n", user->names);
-    	printf("|\tPosition: %s                          |\n", user->positions);
-    	printf("|\tContact: %d                           |\n", user->contacts);
-    	printf("|________________________________________|\n");
+		printf("__________________________________________________________\n");
+		printf("|\n\n\n\tUser Information                                |\n");
+    	printf("|________________________________________________________|\n");
+    	printf("|\tUsername: %s                          				 |\n", user->usernames);
+    	printf("|\tName: %s                                              |\n", user->names);
+    	printf("|\tPosition: %s                                          |\n", user->chosen_position.position_name);
+    	printf("|\tContact: %d                                           |\n", user->contacts);
+    	printf("|________________________________________________________|\n");
     	// hanggang dito
     	
     	
@@ -405,9 +417,9 @@ void user_info_update(User* user){
     	printf("|                                                        |\n");
     	printf("|________________________________________________________|\n");
     	printf("|                                                        |\n");
-    	printf("|    [1] Username                                        |\n");
-    	printf("|    [2] Full Name                                       |\n");
-    	printf("|    [3] Contact                                         |\n");
+    	printf("|    [1] Change Username                                 |\n");
+    	printf("|    [2] Change Full Name                                |\n");
+    	printf("|    [3] Change Contact                                  |\n");
     	printf("|    [4] Change Password                                 |\n");
     	printf("|    [9] Back                                            |\n");
     	printf("|                                                        |\n");
@@ -515,9 +527,9 @@ void admin_manage(User* user){
     	printf("|________________________________________________________|\n");
     	
     	// Check if there are any user account 
-    	if (numUsers == 0) {
+    	if (numUsers == 1) {
     	
-        	printf("\n\nNo account registered.\n");
+        	printf("\n\nNo Employees registered.\n");
         	
     	} else {
     		
@@ -535,7 +547,7 @@ void admin_manage(User* user){
             	float gross_pay = calculate_gross_pay(&users[i]);
 
             	// Print employee details along with computed values
-            	printf("|%d\t|%s\t\t|%s\t\t\t|%.2f\t\t|%.2f\t|%.2f\t|%.2f\t\t\t|\n", i, users[i].names, users[i].positions[0], basic_salary, overtime, users[i].bonus, gross_pay);
+            	printf("|%d\t|%s\t\t|%s\t\t\t|%.2f\t\t|%.2f\t|%.2f\t|%.2f\t\t\t|\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay);
             	
         	}
             printf("|_______|_______________________|_______________________|_______________________|_______________|_______________|_______________________________|\n");
@@ -570,7 +582,7 @@ void admin_manage(User* user){
     			break;
     			
     		case 4:
-    			add_position(user);
+    			add_position();
     			break;
     			
     		case 9:
@@ -604,13 +616,16 @@ void delete_employee() {
     printf("|________________________________________________________|\n");
 
     // Display employee list with IDs
-    if (numUsers == 0) {
-        printf("\nNo employees registered.\n");
+    if (numUsers == 1) {
+    	
+        printf("\n\nNo Employees registered.\n");
+        
     } else {
+    	
         printf("\nEmployee List:\n");
-        	printf(" _______________________________________________________________________________________________________________________________________________\n");
-        	printf("|ID\t|Name\t\t\t|Position\t\t|Basic Salary\t\t|Overtime\t|Bonus\t\t|Total Earnings                 |\n");
-        	printf("|_______|_______________________|_______________________|_______________________|_______________|_______________|_______________________________|\n");
+        printf(" _______________________________________________________________________________________________________________________________________________\n");
+        printf("|ID\t|Name\t\t\t|Position\t\t|Basic Salary\t\t|Overtime\t|Bonus\t\t|Total Earnings                 |\n");
+        printf("|_______|_______________________|_______________________|_______________________|_______________|_______________|_______________________________|\n");
         // Loop through each user and display their details
         for (i = 1; i < numUsers; i++) {
         	
@@ -620,14 +635,14 @@ void delete_employee() {
             float gross_pay = calculate_gross_pay(&users[i]);
 
 			// Print employee details along with computed values
-            printf("|%d\t|%s\t\t|%s\t\t\t|%.2f\t\t|%.2f\t|%.2f\t|%.2f\t\t\t|\n", i, users[i].names, users[i].positions[0], basic_salary, overtime, users[i].bonus, gross_pay);
+            printf("|%d\t|%s\t\t|%s\t\t\t|%.2f\t\t|%.2f\t|%.2f\t|%.2f\t\t\t|\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay);
         }
-            printf("|_______|_______________________|_______________________|_______________________|_______________|_______________|_______________________________|\n");
+        printf("|_______|_______________________|_______________________|_______________________|_______________|_______________|_______________________________|\n");
 	// hanggang DITO!
 	
 	
-        // Prompt for employee ID to delete
-        printf("\nEnter the ID of the employee to delete: ");
+        // Prompt for employee number to delete
+        printf("\nEnter the number of the employee to delete: ");
         int id;
         scanf("%d", &id);
         getchar(); // Consume the newline character left in the input buffer
@@ -660,14 +675,17 @@ void add_employee(){
 	
 	clean();
 	
-	if (users[0].num_positions == 0){
+	// Check if positions are available
+	if (numPositions == 0){
 		
-		printf("\n\tNo positions are available. Please add positon firts\n");
+		printf("\n\tNo positions are available. Please add a position first\n");
 		wait_clean();
 		return;
 	}
 	
+	// Check if maximum number of users reached
 	if (numUsers >= MAX_USERS) {
+		
         printf("\n\t\tMaximum number of users reached.\n");
         return;
     }
@@ -675,57 +693,68 @@ void add_employee(){
 	// need I-rework design
     printf("\n\t\tRegister New Employee\n\n");
     
-    printf("\tUsername: ");
-    scanf("%s", users[numUsers].usernames);
+    User new_user;
     
-    printf("\tPassword: ");
-    scanf("%s", users[numUsers].passwords);
+    printf("\tEnter Username: ");
+    scanf("%s", new_user.usernames);
+    
+    printf("\tEnter Password: ");
+    scanf("%s", new_user.passwords);
     getchar(); // Consume the newline character left in the input buffer
     
-    printf("\tName: ");
-    scanf("%[^\n]s", users[numUsers].names);    // Use %[^\n] to read the entire line including spaces
+    printf("\tEnter Name: ");
+    scanf("%[^\n]s", new_user.names);    // Use %[^\n] to read the entire line including spaces
     
-    printf("\tContact: "); 
-    scanf("%d", &users[numUsers].contacts);
+    printf("\tEnter Contact: "); 
+    scanf("%d", &new_user.contacts);
     
     printf("\n\n\t\tEmployee Salary Computation\n\n");
     
     // Display available positions
-    printf("\n\tPositions\n\n");
     
-    for(i = 0; i < users[0].num_positions; i++){
+    int chosen_index;
+    
+    do{
+    	
+    	chosen_index = 0;
+    	
+    	printf("\n\t\tAvailable Positions\n\n");
+    
+    	for(i = 0; i < numPositions; i++){
     	
     	
-    	printf("[%d] %s\n", i + 1, users[0].positions[i]);
-	}
+    		printf("\t\t[%d] %s\n", i + 1, positions[i].position_name);
+		}
     
-    int chosen_position;
-    printf("\n\tChoose Position: ");
-    scanf("%d", &chosen_position);
+    	
+    	printf("\n\tChoose Position (Enter number): ");
+    	scanf("%d", &chosen_index);
     
-    chosen_position--; // adjust to 0 based index
+    	// Validate the chosen position index
+        if (chosen_index < 1 || chosen_index > numPositions) {
+            printf("\n\tInvalid position choice. Please choose a valid position.\n");
+        }
+        
+	}while (chosen_index < 1 || chosen_index > numPositions);
     
-    // assign selected position details to the new employee
-    strcpy(users[numUsers].positions[0], users[0].positions[chosen_position]);
-    users[numUsers].hourly_rates[0] = users[0].hourly_rates[chosen_position];
-    users[numUsers].overtime_rates[0] = users[0].overtime_rates[chosen_position];
+    new_user.chosen_position = positions[chosen_index - 1]; // Assign chosen position // adjust to 0 based index
     
-    users[numUsers].num_positions = 1; // new employee has only 1 position
     
-    printf("\tTotal number of hours worked (in a month): "); 
-    scanf("%f", &users[numUsers].work_hours);
+    printf("\tEnter Total number of hours worked (in a month): "); 
+    scanf("%f", &new_user.work_hours);
     
-    printf("\tTotal number of overtime hours worked (in a month): "); 
-    scanf("%f", &users[numUsers].overtime_hours);
+    printf("\tEnter Total number of overtime hours worked (in a month): "); 
+    scanf("%f", &new_user.overtime_hours);
     
-    printf("\tTotal Bonuses (in a month): "); 
-    scanf("%f", &users[numUsers].bonus);
+    printf("\tEnter Total Bonuses (in a month): "); 
+    scanf("%f", &new_user.bonus);
     
-    users[numUsers].userTypes = 0; // automatically set to employee
+    new_user.userTypes = 0; // automatically set to employee
+    
+    users[numUsers] = new_user;
+    numUsers++;
 
     printf("\tRegistration successful.\n");
-
-    numUsers++;
     
     wait_clean();
     
@@ -735,12 +764,8 @@ void add_employee(){
 float calculate_basic_salary(User* user){
 	
 	float basic_salary = 0.0;
-	int i;
 	
-	for(i = 0; i < user->num_positions; i++){
-		
-		basic_salary += user->work_hours * user->hourly_rates[i];
-	}
+	basic_salary = user->work_hours * user->chosen_position.hourly_rates;
 	
 	return basic_salary;
 }
@@ -749,12 +774,8 @@ float calculate_basic_salary(User* user){
 float calculate_overtime(User* user){
 	
 	float overtime = 0.0;
-	int i;
 	
-	for(i = 0; i < user->num_positions; i++){
-		
-		overtime += user->overtime_hours * user->overtime_rates[i];
-	}
+	overtime = user->overtime_hours * user->chosen_position.overtime_rates;
 	
 	return overtime;
 }
@@ -766,7 +787,6 @@ float calculate_gross_pay(User* user){
 	float overtime = calculate_overtime(user);
 	
 	float gross_pay = salary + overtime + user->bonus;
-	//float gross_pay = (user->work_hours * user->hourly_rates) + (user->overtime_hours * user->overtime_rates);
 	
 	return gross_pay;
 	
@@ -796,7 +816,7 @@ void change_password(User* user){
     printf("\n\tEnter current password: ");
     scanf("%s", currentPassword);
     
-    if (strcmp(currentPassword, user->passwords) == 0) {
+    if (strcmp(currentPassword, user->passwords) == 0) { // checks inputted password
     	
         printf("\n\tEnter new password: ");
         scanf("%s", user->passwords);
@@ -830,7 +850,6 @@ void change_name(User* user){
 	
 	clean();
 	
-	
 	printf("\nEnter new name: ");
     scanf(" %[^\n]", user->names); // Use %[^\n] to read the entire line including spaces
     getchar(); // Consume the newline character left in the input buffer
@@ -857,26 +876,29 @@ void add_position(User* user){
 	
 	clean();
 	
-	printf("\n\n\t\tAdd new position\n\n");
-	
-	if(user->num_positions >= MAX_POSITION){
+	if(numPositions >= MAX_POSITION){
 		
 		printf("\n\n\t\tMaximum positions reached.\n\n");
 		wait_clean();
 		return;
 	}
 	
-	printf("\n\n\t\tPosition Name: ");
-	scanf("%s", user->positions[user->num_positions]);
+	printf("\n\n\t\tAdd new position\n\n");
 	
-	printf("\n\n\t\tBasic Salary Rate: ");
-	scanf("%f", &user->hourly_rates[user->num_positions]);
+	Position new_position;
+	
+	printf("\n\n\t\tEnter Position Name: ");
+	scanf("%s", new_position.position_name);
+	
+	printf("\n\n\t\tEnter Basic Salary Rate (Per Hour): ");
+	scanf("%f", &new_position.hourly_rates);
 	
 	
-	printf("\n\n\t\tOvertime Rate: ");
-	scanf("%f", &user->overtime_rates[user->num_positions]);
+	printf("\n\n\t\tEnter Overtime Rate (Per Hour): ");
+	scanf("%f", &new_position.overtime_rates);
 	
-	user->num_positions++;
+	positions[numPositions] = new_position;
+	numPositions++;
 	
 	printf("\n\t\tPosition Added Succesfully");
 	
