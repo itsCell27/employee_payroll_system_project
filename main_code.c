@@ -40,7 +40,6 @@ typedef struct{
 	char passwords[MAX_PASSWORD_LENGTH]; 		// password of the user
 	char usernames[MAX_USER_LENGTH];     		// username of the employee or admin   
 	char names[MAX_CHAR];				 	    // name of the employee
-	//char positions[MAX_POSITION][MAX_CHAR];	 	// position of the employee
 	int contacts;						 		// contact number of the employee
 	
 	
@@ -48,8 +47,7 @@ typedef struct{
 	float overtime_hours;  				 		// total number of overtime in hours worked (in a Month).
 	float bonus;                         		// amount of bonus of the employee (in a Month). 
 	
-	
-	//int num_positions;					 // number of positions for this user
+
 	int userTypes;         				 		// 0 for employee, 1 for admin
 	
 } User;
@@ -95,7 +93,10 @@ void add_position();		   		   // for adding different employee positions
 float calculate_basic_salary(User* user);   // calculates basic salary
 float calculate_overtime(User* user);       // calculates overtime pay
 float calculate_gross_pay(User* user);      // calculates gross pay
-float tax_computation(User* user);          // calculates tax
+
+// deductions
+float tax_computation(User* user);          // calculates tax deductions
+float sss_computation(User* user);			// calculates SSS deductions
 
 /*
 // deductions
@@ -329,6 +330,7 @@ void user_payslip(User* user){
 	float overtime = calculate_overtime(user);
 	float user_gross_pay = calculate_gross_pay(user);
 	float tax =  tax_computation(user);
+	float sss =  sss_computation(user);
 	
 	clean();
 	
@@ -366,6 +368,7 @@ void user_payslip(User* user){
     	printf("| Deductions:                                            |\n");
     	printf("|                                                        |\n");
     	printf("| Tax: %.2f                                              \n", tax);
+    	printf("| SSS: %.2f                                              \n", sss);
     	printf("|                                                        |\n");
     	printf("|________________________________________________________|\n");
     	printf("|                                                        |\n");
@@ -628,7 +631,7 @@ void delete_employee() {
     	
         printf("\nEmployee List:\n");
         printf("=================================================================================================================================================\n");
-        printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Tax\n");
+        printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Tax\t|SSS\n");
         printf("=================================================================================================================================================\n");
 
         // Loop through each user and display their details
@@ -639,9 +642,10 @@ void delete_employee() {
             float overtime = calculate_overtime(&users[i]);
             float gross_pay = calculate_gross_pay(&users[i]);
             float tax = tax_computation(&users[i]);
+            float sss = sss_computation(&users[i]);
 
             // Print employee details along with computed values
-            printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, tax);
+            printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, tax, sss);
             	
         }
         printf("=================================================================================================================================================\n");
@@ -945,10 +949,12 @@ float tax_computation(User* user){
 	float gross_pay = calculate_gross_pay(user);
 	float tax = 0.0;
 	
+	// The following are based on Tax table of 2022
+	
 	if (gross_pay < 0) {
 		
         // Handle potential error if gross pay is negative
-        return tax = 404; // Indicating an error with a special return value
+        return tax = 404; // Indicating an error 
         
     } else if (gross_pay >= 666667) {
     	
@@ -967,11 +973,187 @@ float tax_computation(User* user){
         tax = (gross_pay - 20833) * 0.20; // 20% tax rate
     } else {
     	
-        tax = 0.0; // No tax for gross pay below 20833
+        tax = 0.0; // No tax for gross pay below 20,833
     }
 	
 	return tax;
 }
+
+// SSS computation
+float sss_computation(User* user){
+	
+	float gross_pay = calculate_gross_pay(user);
+	float sss = 0.0;
+	
+	if (gross_pay < 0) {
+		
+		// Handle potential error if gross pay is negative
+        return sss = 404; // Indicating an error 
+	} else if (gross_pay >= 29750) {
+		
+		sss = 1350.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 29250) {
+		
+		sss = 1327.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 28750) {
+		
+		sss = 1305.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 28250) {
+		
+		sss = 1282.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 27750) {
+		
+		sss = 1260.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 27250) {
+		
+		sss = 1237.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 26750) {
+		
+		sss = 1215.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 26250) {
+		
+		sss = 1192.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 25750) {
+		
+		sss = 1170.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 25250) {
+		
+		sss = 1147.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 24750) {
+		
+		sss = 1125.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 24250) {
+		
+		sss = 1102.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 23750) {
+		
+		sss = 1080.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 23250) {
+		
+		sss = 1057.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 22750) {
+		
+		sss = 1035.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 22250) {
+		
+		sss = 1012.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 21750) {
+		
+		sss = 990.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 21250) {
+		
+		sss = 967.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 20750) {
+		
+		sss = 945.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 20250) {
+		
+		sss = 922.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 19750) {
+		
+		sss = 900.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 19250) {
+		
+		sss = 877.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 18750) {
+		
+		sss = 855.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 18250) {
+		
+		sss = 832.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 17750) {
+		
+		sss = 810.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 17250) {
+		
+		sss = 787.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 16750) {
+		
+		sss = 765.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 16250) {
+		
+		sss = 742.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 15750) {
+		
+		sss = 720.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 15250) {
+		
+		sss = 697.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 14750) {
+		
+		sss = 675.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 14250) {
+		
+		sss = 652.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 13750) {
+		
+		sss = 630.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 13250) {
+		
+		sss = 607.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 12750) {
+		
+		sss = 585.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 12250) {
+		
+		sss = 562.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 11750) {
+		
+		sss = 540.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 11250) {
+		
+		sss = 517.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 10750) {
+		
+		sss = 495.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 10250) {
+		
+		sss = 472.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 9750) {
+		
+		sss = 450.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 9250) {
+		
+		sss = 427.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 8750) {
+		
+		sss = 405.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 8250) {
+		
+		sss = 382.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 7750) {
+		
+		sss = 360.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 7250) {
+		
+		sss = 337.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 6750) {
+		
+		sss = 315.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 6250) {
+		
+		sss = 292.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 5750) {
+		
+		sss = 270.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 5250) {
+		
+		sss = 247.50; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 4750) {
+		
+		sss = 225.0; // based to Monthly SSS Contribution Table
+	} else if (gross_pay >= 4250) {
+		
+		sss = 202.50; // based to Monthly SSS Contribution Table
+	} else {
+		
+		sss = 180.0; // based to Monthly SSS Contribution Table
+	}
+	
+	return sss;
+}
+
+
 
 
 
