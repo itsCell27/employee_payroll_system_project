@@ -789,10 +789,17 @@ void delete_employee() {
 	
 	
         // Prompt for employee number to delete
-        printf("\n\n\tEnter the number of the employee to delete: ");
+        printf("\n\n\tEnter the number of the employee to delete (Enter 0 to cancel): ");
         int id;
         scanf("%d", &id);
         getchar(); // Consume the newline character left in the input buffer
+        
+        if(id == 0){
+        	
+        	printf("\nOperation Cancelled\n");
+    		wait_clean();
+    		return;
+		}
 
         // Validate ID
         if (id >= 0 && id <= numUsers) {
