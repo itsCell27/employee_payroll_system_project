@@ -97,14 +97,12 @@ float calculate_gross_pay(User* user);      // calculates gross pay
 // deductions
 float tax_computation(User* user);          // calculates tax deductions
 float sss_computation(User* user);			// calculates SSS deductions
+float pagibig_computation(User* user);      // calculates Pagibig deductions
+float philhealth_computation(User* user);	// calculates Philhealth deductions
+float total_deductions(User* user);         // calculates total deductions
 
-/*
-// deductions
-float calculate_tax(User* user); 			// calculates tax deductions
-float calculate_sss(User* user); 			// calculates SSS deductions
-float calculate_philhealth(User* user); 	// calculates Philhealth deductions
-float calculate_pagibig(User* user); 		// calculates Pagibig deductions
-*/
+float netpay(User* user);                   // calculates Netpay = gross pay - total deductions
+
 
 int main() {
 	
@@ -331,6 +329,10 @@ void user_payslip(User* user){
 	float user_gross_pay = calculate_gross_pay(user);
 	float tax =  tax_computation(user);
 	float sss =  sss_computation(user);
+	float pagibig = pagibig_computation(user);
+	float philhealth = philhealth_computation(user);
+	float total_deduction = total_deductions(user);
+	float netpays = netpay(user);
 	
 	clean();
 	
@@ -369,7 +371,11 @@ void user_payslip(User* user){
     	printf("|                                                        |\n");
     	printf("| Tax: %.2f                                              \n", tax);
     	printf("| SSS: %.2f                                              \n", sss);
+    	printf("| Pagibig: %.2f                                          \n", pagibig);
+    	printf("| Philhealth: %.2f                                       \n", philhealth);
+    	printf("| Total Deductions: %.2f                                 \n", total_deduction);
     	printf("|                                                        |\n");
+    	printf("| Net Pay: %.2f                                              \n", netpays);
     	printf("|________________________________________________________|\n");
     	printf("|                                                        |\n");
     	printf("|    [9] Back                                            |\n");
@@ -541,7 +547,7 @@ void admin_manage(User* user){
     		
         	printf("\nEmployee List:\n");
         	printf("=================================================================================================================================================\n");
-        	printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Tax\n");
+        	printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Total Deductions\n");
         	printf("=================================================================================================================================================\n");
 
         	// Loop through each user and display their details
@@ -551,10 +557,10 @@ void admin_manage(User* user){
             	float basic_salary = calculate_basic_salary(&users[i]);
             	float overtime = calculate_overtime(&users[i]);
             	float gross_pay = calculate_gross_pay(&users[i]);
-            	float tax = tax_computation(&users[i]);
+            	float total_deduction = total_deductions(&users[i]);
 
             	// Print employee details along with computed values
-            	printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, tax);
+            	printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, total_deduction);
             	
         	}
             printf("=================================================================================================================================================\n");
@@ -629,26 +635,41 @@ void delete_employee() {
         
     } else {
     	
-        printf("\nEmployee List:\n");
-        printf("=================================================================================================================================================\n");
-        printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Tax\t|SSS\n");
-        printf("=================================================================================================================================================\n");
+        // Paayos ng display neto hindi pantay, magmula DITO.
+		//design
+		printf("\n ________________________________________________________\n");
+    	printf("|                                                        |\n");
+    	printf("|                   Manage Employees                     |\n");
+    	printf("|                                                        |\n");
+    	printf("|________________________________________________________|\n");
+    	
+    	// Check if there are any user account 
+    	if (numUsers == 1) {
+    	
+        	printf("\n\nNo Employees registered.\n");
+        	
+    	} else {
+    		
+        	printf("\nEmployee List:\n");
+        	printf("=================================================================================================================================================\n");
+        	printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Total Deductions\n");
+        	printf("=================================================================================================================================================\n");
 
-        // Loop through each user and display their details
-        for (i = 1; i < numUsers; i++) {
+        	// Loop through each user and display their details
+        	for (i = 1; i < numUsers; i++) {
         		
-            // Calculate basic salary, overtime, and gross pay
-            float basic_salary = calculate_basic_salary(&users[i]);
-            float overtime = calculate_overtime(&users[i]);
-            float gross_pay = calculate_gross_pay(&users[i]);
-            float tax = tax_computation(&users[i]);
-            float sss = sss_computation(&users[i]);
+            	// Calculate basic salary, overtime, and gross pay
+            	float basic_salary = calculate_basic_salary(&users[i]);
+            	float overtime = calculate_overtime(&users[i]);
+            	float gross_pay = calculate_gross_pay(&users[i]);
+            	float total_deduction = total_deductions(&users[i]);
 
-            // Print employee details along with computed values
-            printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, tax, sss);
+            	// Print employee details along with computed values
+            	printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, total_deduction);
             	
-        }
-        printf("=================================================================================================================================================\n");
+        	}
+            printf("=================================================================================================================================================\n");
+    	}
 	// hanggang DITO!
 	
 	
@@ -772,7 +793,6 @@ void add_employee(){
 	}while (chosen_index < 1 || chosen_index > numPositions);
     
     new_user.chosen_position = positions[chosen_index - 1]; // Assign chosen position // adjust to 0 based index
-    
     
     printf("\tEnter Total number of hours worked (in a month): "); 
     scanf("%f", &new_user.work_hours);
@@ -1153,7 +1173,55 @@ float sss_computation(User* user){
 	return sss;
 }
 
+// calculates Pagibig deductions
+float pagibig_computation(User* user){
+	
+	float gross_pay = calculate_gross_pay(user);
+	float pagibig = 0.0;
+	
+	if (gross_pay < 0) {
+		
+		// Handle potential error if gross pay is negative
+        return pagibig = 404; // Indicating an error 
+	} else if (gross_pay >= 10000) {
+		
+		pagibig = 200.0; // if gross pay is equal or over 10,000, P100.00 is the maximum deductions
+	} else if (gross_pay >= 1500) {
+		
+		pagibig = gross_pay * 0.02; // 2% rate
+	} else {
+		
+		pagibig = gross_pay * 0.01; // 1% rate
+	}
+	
+	return pagibig;
+}
 
+// calculates Philhealth deductions
+float philhealth_computation(User* user){
+	
+	float gross_pay = calculate_gross_pay(user);
+	float philhealth = 0.0;
+	
+	if (gross_pay < 0) {
+		
+		// Handle potential error if gross pay is negative
+        return philhealth = 404; // Indicating an error 
+	} else {
+		
+		philhealth = (gross_pay * 0.05) / 2; // 5% rate based to 2024 philhealth contribution
+	}
+	
+	return philhealth;
+}
 
+float total_deductions(User* user){
+	
+	return tax_computation(user) + sss_computation(user) + pagibig_computation(user) + philhealth_computation(user);
+}
 
+float netpay(User* user){
+	
+	return calculate_gross_pay(user) - total_deductions(user);
+}
 
