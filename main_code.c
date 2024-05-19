@@ -1,14 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////////////
-//																					  //
-//																					  //
-// 		   					  Employee Payroll System								  //
-// 		   					  			by								              //
-// 		   					    Group 7echKnoLogist									  //
-//																					  //
-//																					  //
-//																					  //
-////////////////////////////////////////////////////////////////////////////////////////
-
 #include <stdio.h>
 #include <ctype.h>
 #include <conio.h>
@@ -16,820 +5,501 @@
 #include <string.h>
 
 
-#define MAX_USERS 50             // maximum number of users
-#define MAX_USER_LENGTH 50		 // maximum number of characters for usernames
-#define MAX_PASSWORD_LENGTH 20   // maximum number of characters for password
-#define MAX_CHAR 100			 // maximum number of characters for other char types
-#define MAX_POSITION 50		 	 // maximum number of positions
+#define MAX_USERS 10
+#define MAX_NAME_LENGTH 50
+#define MAX_PASSWORD_LENGTH 20
+#define MAX_LENGTH 50
 
-// position structure
-typedef struct{
+
+// Global arrays to store usernames, passwords, and user types
+char usernames[MAX_USERS][MAX_NAME_LENGTH];
+char passwords[MAX_USERS][MAX_PASSWORD_LENGTH];
+char name[MAX_USERS][MAX_NAME_LENGTH];
+char address[MAX_USERS][MAX_NAME_LENGTH];
+char position[MAX_USERS][MAX_LENGTH];
+int contact[MAX_USERS];
+
+int userTypes[MAX_USERS]; // 0 for employee, 1 for admin
+int numUsers = 0;
+
+//salary
+
+
+void main_menu();
+
+
+int check_user(const char *username); // Function to check if the username exists
+int check_pass(const char *password); // Function to check password
+void clean(); //clears console
+void wait_clean(); //clears console after user press any key
+
+
+void login_system();
+
+
+void user();
+void user_payslip();
+void user_info_update();
+
+
+void admin();
+void admin_manage();
+void add_employee();
+
+
+
+void main(){
 	
-	char position_name[MAX_CHAR];
-	float hourly_rates;    	 			// pay per hour
-	float overtime_rates;  	 			// overtime pay per hour
-	
-} Position;
-
-// Define user structure
-typedef struct{
-	
-	Position chosen_position; 					// To hold the chosen position for the user
-	
-	
-	char passwords[MAX_PASSWORD_LENGTH]; 		// password of the user
-	char usernames[MAX_USER_LENGTH];     		// username of the employee or admin   
-	char names[MAX_CHAR];				 	    // name of the employee
-	int contacts;						 		// contact number of the employee
-	
-	
-	float work_hours;      				 		// total number of hours worked (in a Month).
-	float overtime_hours;  				 		// total number of overtime in hours worked (in a Month).
-	float bonus;                         		// amount of bonus of the employee (in a Month). 
-	
-
-	int userTypes;         				 		// 0 for employee, 1 for admin
-	
-} User;
-
-
-Position positions[MAX_POSITION]; 	    // Global arrays to store different employee positions
-User users[MAX_USERS];					// Global arrays to store employee account & information
-
-int numPositions = 0;					// Counts the total number different positions the admin has created
-int numUsers = 0;						// Counts the total number of registered employees
-
-
-// Predefined admin credentials 	   // THIS IS THE ADMIN DEFAULT USERNAME AND PASSWORD
-char adminUsername[] = "admin";        // admin username
-char adminPassword[] = "admin123";	   // admin password
-
-
-void main_menu();                      // main-menu of employee payroll system
-
-
-User* find_user(const char *username); // Function to check if the username exists
-void clean();                          // clears console
-void wait_clean();                     // clears console after user press any key
-void change_password(User* user);      // changes user password
-void change_username(User* user);      // changes user username
-void change_name(User* user);          // changes user name
-void change_contact(User* user);       // changes user contact
-void login_system();				   // user login menu
-
-// employee menu
-void user(User* user);                 // employee main-menu
-void user_payslip(User* user);		   // displays salary payslip
-void user_info_update(User* user);	   // displays & allows change of employee information
-
-// admin menu
-void admin(User* user);				   // admin main-menu
-void admin_manage(User* user);		   // menu to manage employees
-void add_employee();				   // register's new employee
-void delete_employee();                // for deleting a specific employee
-void add_position();		   		   // for adding different employee positions
-
-// salary computations
-float calculate_basic_salary(User* user);   // calculates basic salary
-float calculate_overtime(User* user);       // calculates overtime pay
-float calculate_gross_pay(User* user);      // calculates gross pay
-
-// deductions
-float tax_computation(User* user);          // calculates tax deductions
-float sss_computation(User* user);			// calculates SSS deductions
-float pagibig_computation(User* user);      // calculates Pagibig deductions
-float philhealth_computation(User* user);	// calculates Philhealth deductions
-float total_deductions(User* user);         // calculates total deductions
-
-float netpay(User* user);                   // calculates Netpay = gross pay - total deductions
-
-
-int main() {
-	
-    // Copy predefined admin account to array structure of "User"
-    strcpy(users[0].usernames, adminUsername);
-    strcpy(users[0].passwords, adminPassword);
-    users[0].userTypes = 1; // set to admin
+	// Predefined admin account
+    strcpy(usernames[0], "admin");
+    strcpy(passwords[0], "admin123");
+    userTypes[0] = 1; // Admin
     numUsers++;
     
-    main_menu();
     
-    
-    return 0;
+	main_menu();
+	
 }
-
 
 // Function for the main menu
 void main_menu(){
 	
-	int choice;
+	char choice;
 	
 	do{
 		//design
-		printf("\n ________________________________________________________\n");
-    	printf("|                                                        |\n");
-    	printf("|           Welcome to Employee Payroll System           |\n");
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
-    	printf("|                                                        |\n");
-    	printf("|    [1] Login                                           |\n");
-    	printf("|    [9] Exit                                            |\n");
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
-    	
+		printf("\n**********************************************************\n");
+    	printf("*                                                        *\n");
+    	printf("*                Welcome to Payroll System               *\n");
+    	printf("*                                                        *\n");
+    	printf("**********************************************************\n");
+    	printf("*                                                        *\n");
+    	printf("*    [A] Login                                           *\n");
+    	printf("*    [X] Exit                                            *\n");
+    	printf("*                                                        *\n");
+    	printf("**********************************************************\n");
     	printf("\tEnter: ");
-    	scanf("%d", &choice);
+    	scanf(" %c", &choice);
+    	choice = toupper(choice);
+    	getchar(); // Consume the newline character left in the input buffer
     
     	switch (choice){
     	
-    		case 1:
+    		case 'A':
     			login_system();
     			break;
-    			
-    		case 9:
+    		case 'X':
     			break;
-    			
     		default:
     			clean();
     			printf("\n\t\t\tnot in option\n");
-    			while (getchar() != '\n');           // Clear the input buffer (consume remaining characters including newline)
-    			wait_clean();						 // Wait for keypress and clear console
+    			wait_clean();
     			break;
 		}
-		
-	}while (choice != 9);
+	}while(choice != 'X');
 	
 }
 
 // Function to check if the username exists
-User* find_user(const char *username){
+int check_user(const char *username){
 	
-    int i;
-    
-    for (i = 0; i < numUsers; i++) {
-    	
-    	if (strcmp(users[i].usernames, username) == 0) { // Checks if user exist
-    	
-            	return &users[i]; // Return index of the user if found
-        } 
+	int i;
+	
+	for (i = 0; i < numUsers; i++) {
+        if (strcmp(usernames[i], username) == 0) {
+            return i; // Return index of the user if found
+        }
     }
-    return NULL; // Return NULL if username not found
+    return -1; // Return -1 if username not found
 }
 
+// Function to check password
+int check_pass(const char *password){
+	
+	int i;
+	
+	for (i = 0; i < numUsers; i++) {
+        if (strcmp(passwords[i], password) == 0) {
+            return i; // Return index of the user if found
+        }
+    }
+    return -1; // Return -1 if username not found
+}
 
 
 void login_system(){
 	
-	int attempt = 4;       // number of attempts for username input
-	int attempt_pass = 4;  // number of attempts for password input
+	int attempt = 3;
+	int admin_attempt = 3;
+	int user_attempt = 3;
 	
-	char username[MAX_USER_LENGTH];
+	char username[MAX_NAME_LENGTH];
     char password[MAX_PASSWORD_LENGTH];
     
     clean();
     
-    do{ 
+    do{
     	
 
     	printf("\n\t\tLogin\n\n");
-    	printf("\t\tEnter Username: ");
+    	printf("\t\tUsername: ");
     	scanf("%s", username);
+    	getchar(); // Consume the newline character left in the input buffer
     
 
-    	User* index = find_user(username); // checks if username exists
-    	if (index != NULL) { 
+    	int index = check_user(username); // checks inputted username
+    	if (index != -1 && userTypes[index] == 1) { // checks if username is admin
     		
-    		attempt = 0; // stops the loop if username exists
+    		attempt = 0;
     		
     		do{
     			
-    			printf("\t\tEnter Password: ");
+    			printf("\t\tPassword: ");
     			scanf("%s", password);
+    			getchar(); // Consume the newline character left in the input buffer
+    	
+    			int index_pass = check_pass(password);
+    			if (index_pass != -1){
+    				
+    				admin_attempt = 0;
+    				clean();
     		
-				if (strcmp(index->passwords, password) == 0) { // checks inputted password
-				
-					attempt_pass = 0; // stops the loop if password is correct
-					
-					if (index->userTypes == 1){ //checks if its an admin
-					
-						clean();
-
-    					printf("\n\n\tAdmin login successful. Welcome, %s!\n\n", username);
-    					wait_clean(); // Wait for keypress and clear console
-        				admin(index);
-        				
-					} else { // if not, prompts to employee menu
-					
-						clean();
-					
-						printf("\n\n\tEmployee login successful. Welcome, %s!\n\n", username);
-    					wait_clean(); // Wait for keypress and clear console
-        				user(index);
-							
-					}
-				} else {	
-				
-					// if password is incorrect
+    				printf("\n\n\tAdmin login successful. Welcome, %s!\n\n", username);
+    				wait_clean();
+        			admin();
+				} else {
 					
 					clean();
-					attempt_pass--; // decrease the number of attempts
-					
-					if(attempt_pass == 0){
-						
-						clean();
-					} else {
-						
-						printf("\n\n\tWrong password! Please try again. [%d]\n\n", attempt_pass);
-					}
-					
+					admin_attempt--;
+					printf("\n\n\tInvalid password. Please try again. [%d]\n\n", admin_attempt);
 				}
     			
-			}while(attempt_pass != 0);
-			
+			}while(admin_attempt != 0);
     		
+		
+        
+    	} else if (index != -1 && userTypes[index] == 0) { // checks if username is employee
+    		
+    		attempt = 0;
+    		
+    		do{
+    			
+    			printf("\t\tPassword: ");
+    			scanf("%s", password);
+    			getchar(); // Consume the newline character left in the input buffer
+    	
+    			int index_pass = check_pass(password);
+    			if (index_pass != -1){
+    				
+    				user_attempt = 0;
+    				clean();
+    		
+    				printf("\n\n\tEmployee login successful. Welcome, %s!\n\n", username);
+    				wait_clean();
+        			user(index);
+				} else {
+			
+					printf("\n\n\tInvalid password. Please try again. [%d]\n\n", user_attempt);
+				}
+    			
+			}while(user_attempt != 0);
+    	
+        	
         
     	} else {
-    		
-    		// if username does not exists
-    		
-    		clean();
-    		attempt--;	// decrease the number of attempts
-    		
-    		if(attempt == 0){
-    			
-    			clean();
-			} else {
-				
-				printf("\n\n\tUser does not exist. Please try again. [%d]\n\n", attempt);
-			}
-			
-		} 
     	
-	}while (attempt != 0);
+    		clean();
+    		attempt--;
+    		printf("\n\n\tUser does not exist. Please try again. [%d]\n\n", attempt);
+    		
+		}
+    	
+	}while(attempt != 0);
     
     
 }
 
 
 // Function for the user menu
-void user(User* user){
+void user(int index){
 	
-	int choice;
+	
+	char choice;
 	
 	do{
 		//design
-		printf("\n\n\n\t\t*** Welcome: %s ***\n\n", user->usernames);                 //need I rework ung design 
-		printf("\n ________________________________________________________\n");
-    	printf("|                                                        |\n");
-    	printf("|                      Employee Menu                     |\n");
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
-    	printf("|                                                        |\n");
-    	printf("|    [1] View Payslip                                    |\n");
-    	printf("|    [2] Update personal info                            |\n");
-    	printf("|    [9] Logout                                          |\n");
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
+		printf("\n**********************************************************\n");
+    	printf("*                                                        *\n");
+    	printf("*                      Employee Menu                     *\n");
+    	printf("*                                                        *\n");
+    	printf("\nUsername: %s\n", usernames[index]);
+        printf("Name: %s\n", name[index]);
+        printf("Address: %s\n", address[index]);
+        printf("Position: %s\n", position[index]);
+        printf("Contact: %d\n", contact[index]);
+    	printf("**********************************************************\n");
+    	printf("*                                                        *\n");
+    	printf("*    [A] View Payslip                                    *\n");
+    	printf("*    [B] Change Password                                 *\n");
+    	printf("*    [C] Update personal info                            *\n");
+    	printf("*    [X] Logout                                          *\n");
+    	printf("*                                                        *\n");
+    	printf("**********************************************************\n");
     	printf("\tEnter: ");
-    	scanf("%d", &choice);
+    	scanf(" %c", &choice);
+    	choice = toupper(choice);
+    	
     
     	switch (choice){
     	
-    		case 1:
-    			user_payslip(user);
+    		case 'A':
+    			printf("\nN/a\n");
     			break;
-    			
-    		case 2:
-    			user_info_update(user);
+    		case 'B':
+    			printf("\nN/a\n");
     			break;
-    			
-    		case 9:
+    		case 'C':
+    			printf("\nN/a\n");
+    			break;
+    		case 'X':
     			clean();
     			break;
-    			
     		default:
-    			clean();
     			printf("\n\t\t\tnot in option\n");
-    			while (getchar() != '\n');           // Clear the input buffer (consume remaining characters including newline)
-    			wait_clean();						 // Wait for keypress and clear console
     			break;
-    			
 		}
-		
-	}while (choice != 9);
+	}while(choice != 'X');
 	
 }
 
-void user_payslip(User* user){
+void user_payslip(){
 	
-	int choice;
-	
-	float basic_salary = calculate_basic_salary(user);
-	float overtime = calculate_overtime(user);
-	float user_gross_pay = calculate_gross_pay(user);
-	float tax =  tax_computation(user);
-	float sss =  sss_computation(user);
-	float pagibig = pagibig_computation(user);
-	float philhealth = philhealth_computation(user);
-	float total_deduction = total_deductions(user);
-	float netpays = netpay(user);
+	char choice;
 	
 	clean();
 	
 	do{
-		//design & display payslip
-		printf("\n ________________________________________________________\n");
-    	printf("|                                                        |\n");
-    	printf("|                      Salary Payslip                    |\n");
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
-    	printf("|                                                        |\n");
-    	printf("| Personal Information:                                  |\n");
-    	printf("|                                                        \n");
-    	printf("| Employee Name: %s                                      \n", user->names);
-    	printf("| Position: %s                                           \n", user->chosen_position.position_name);
-    	printf("| Contact: %d                                            \n", user->contacts);
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
-    	printf("|                                                        |\n");
-    	printf("| Regular Hours Worked: %.0f                             \n", user->work_hours);
-    	printf("| Hourly Rate: %.2f                                      \n", user->chosen_position.hourly_rates);
-    	printf("| Overtime Hours Worked: %.0f                            \n", user->overtime_hours);
-    	printf("| Overtime Rate: %.2f                                    \n", user->chosen_position.overtime_rates);
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
-    	printf("|                                                        |\n");
-    	printf("| Earnings:                                              |\n");
-    	printf("|                                                        \n");
-    	printf("| Basic Salary: %.2f                                     \n", basic_salary);
-    	printf("| Overtime: %.2f                                         \n", overtime);
-    	printf("| Bonus: %.2f                                            \n", user->bonus);
-    	printf("| Total Earnings: %.2f                                   \n", user_gross_pay);
-    	printf("|                                                        |\n");
-    	printf("|                                                        |\n");
-    	printf("| Deductions:                                            |\n");
-    	printf("|                                                        |\n");
-    	printf("| Tax: %.2f                                              \n", tax);
-    	printf("| SSS: %.2f                                              \n", sss);
-    	printf("| Pagibig: %.2f                                          \n", pagibig);
-    	printf("| Philhealth: %.2f                                       \n", philhealth);
-    	printf("| Total Deductions: %.2f                                 \n", total_deduction);
-    	printf("|                                                        |\n");
-    	printf("| Net Pay: %.2f                                              \n", netpays);
-    	printf("|________________________________________________________|\n");
-    	printf("|                                                        |\n");
-    	printf("|    [9] Back                                            |\n");
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
+		//design
+		printf("\n**********************************************************\n");
+    	printf("*                                                        *\n");
+    	printf("*                      Salary Payslip                    *\n");
+    	printf("*                                                        *\n");
+    	printf("**********************************************************\n");
+    	printf("*                                                        *\n");
+    	printf("*    [A] Withdraw Salary                                 *\n");
+    	printf("*    [X] Back                                            *\n");
+    	printf("*                                                        *\n");
+    	printf("**********************************************************\n");
     	printf("\tEnter: ");
-    	scanf("%d", &choice);
+    	scanf(" %c", &choice);
+    	choice = toupper(choice);
+    	
     
     	switch (choice){
     	
-    		case 9:
-    			clean();						
+    		case 'A':
+    			printf("\nN/a\n");
     			break;
-    			
+    		case 'X':
+    			wait_clean();
+    			break;
     		default:
-    			clean();
     			printf("\n\t\t\tnot in option\n");
-    			while (getchar() != '\n');           // Clear the input buffer (consume remaining characters including newline)
-    			wait_clean();						 // Wait for keypress and clear console
     			break;
-    			
 		}
-		
-	}while (choice != 9);
+	}while(choice != 'X');
 	
 }
 
-void user_info_update(User* user){
+void user_info_update(int index){
 	
-	int choice;
+	char choice;
 	
 	clean();
 	
 	do{
-	
-		// need I rework ung design magmula dito
-		printf("__________________________________________________________\n");
-		printf("|\n\n\n\tUser Information                                |\n");
-    	printf("|________________________________________________________|\n");
-    	printf("|\tUsername: %s                          				 \n", user->usernames);
-    	printf("|\tName: %s                                              \n", user->names);
-    	printf("|\tPosition: %s                                          \n", user->chosen_position.position_name);
-    	printf("|\tContact: %d                                           \n", user->contacts);
-    	printf("|________________________________________________________|\n");
-    	// hanggang dito
-    	
-    	
-		printf("\n ________________________________________________________\n");
-    	printf("|                                                        |\n");
-    	printf("|               Update Personal Information              |\n");
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
-    	printf("|                                                        |\n");
-    	printf("|    [1] Change Username                                 |\n");
-    	printf("|    [2] Change Full Name                                |\n");
-    	printf("|    [3] Change Contact                                  |\n");
-    	printf("|    [4] Change Password                                 |\n");
-    	printf("|    [9] Back                                            |\n");
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
+		//design
+		printf("\n**********************************************************\n");
+    	printf("*                                                        *\n");
+    	printf("*               Update Personal Information              *\n");
+    	printf("*                                                        *\n");
+    	printf("**********************************************************\n");
+    	printf("*                                                        *\n");
+    	printf("\nUsername: %s\n", usernames[index]);
+        printf("Name: %s\n", name[index]);
+        printf("Address: %s\n", address[index]);
+        printf("Position: %s\n", position[index]);
+        printf("Contact: %d\n", contact[index]);
+        printf("*                                                        *\n");
+    	printf("*    [A] Full Name                                       *\n");
+    	printf("*    [B] Address                                         *\n");
+    	printf("*    [C] Contact                                         *\n");
+    	printf("*    [X] Back                                            *\n");
+    	printf("*                                                        *\n");
+    	printf("**********************************************************\n");
     	printf("\tEnter: ");
-    	scanf("%d", &choice);
+    	scanf(" %c", &choice);
+    	choice = toupper(choice);
+    	
     
     	switch (choice){
     	
-    		case 1:
-    			change_username(user);
+    		case 'A':
+    			printf("\nN/a\n");
     			break;
-    			
-    		case 2:
-    			change_name(user);
+    		case 'B':
+    			printf("\nN/a\n");
     			break;
-    			
-    		case 3:
-    			change_contact(user);
+    		case 'C':
+    			printf("\nN/a\n");
     			break;
-    			
-    		case 4:
-    			change_password(user);
-    			break;
-    			
-    		case 9:
+    		case 'X':
     			clean();
     			break;
-    			
     		default:
-    			clean();
     			printf("\n\t\t\tnot in option\n");
-    			while (getchar() != '\n');           // Clear the input buffer (consume remaining characters including newline)
-    			wait_clean();						 // Wait for keypress and clear console
     			break;
-    			
 		}
-		
-	}while (choice != 9);
+	}while(choice != 'X');
 	
 }
 
 
 // Function for the admin menu
-void admin(User* user){
+void admin(){
 	
-	int choice;
+	char choice;
 	
 	do{
 		//design
-		printf("\n ________________________________________________________\n");
-    	printf("|                                                        |\n");
-    	printf("|                      Admin Menu                        |\n");
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
-    	printf("|                                                        |\n");
-    	printf("|    [1] Manage Employees                                |\n");
-    	printf("|    [2] Change Password                                 |\n");
-    	printf("|    [9] Logout                                          |\n");
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
+		printf("\n**********************************************************\n");
+    	printf("*                                                        *\n");
+    	printf("*                      Admin Menu                        *\n");
+    	printf("*                                                        *\n");
+    	printf("**********************************************************\n");
+    	printf("*                                                        *\n");
+    	printf("*    [A] Manage Employees                                *\n");
+    	printf("*    [B] Change Password                                 *\n");
+    	printf("*    [X] Logout                                          *\n");
+    	printf("*                                                        *\n");
+    	printf("**********************************************************\n");
     	printf("\tEnter: ");
-    	scanf("%d", &choice);
+    	scanf(" %c", &choice);
+    	getchar(); // Consume the newline character left in the input buffer
+    	choice = toupper(choice);
+    	
     
     	switch (choice){
     	
-    		case 1:
-    			admin_manage(user);
+    		case 'A':
+    			admin_manage();
     			break;
-    			
-    		case 2:
-    			change_password(user);
-    			break;
-    			
-    		case 9:
-    			clean();
-    			break;
-    			
-    		default:
-    			clean();
-    			printf("\n\t\t\tnot in option\n");
-    			while (getchar() != '\n');           // Clear the input buffer (consume remaining characters including newline)
-    			wait_clean();						 // Wait for keypress and clear console
-    			break;
-    			
-		}
-		
-	}while (choice != 9);
-	
-}
-
-void admin_manage(User* user){
-	
-	int i, choice;
-	
-	clean();
-	
-	do{
-		// Paayos ng display neto hindi pantay, magmula DITO.
-		//design
-		printf("\n ________________________________________________________\n");
-    	printf("|                                                        |\n");
-    	printf("|                   Manage Employees                     |\n");
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
-    	
-    	// Check if there are any user account 
-    	if (numUsers == 1) {
-    	
-        	printf("\n\nNo Employees registered.\n");
-        	
-    	} else {
-    		
-        	printf("\nEmployee List:\n");
-        	printf("=================================================================================================================================================\n");
-        	printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Total Deductions\n");
-        	printf("=================================================================================================================================================\n");
-
-        	// Loop through each user and display their details
-        	for (i = 1; i < numUsers; i++) {
-        		
-            	// Calculate basic salary, overtime, and gross pay
-            	float basic_salary = calculate_basic_salary(&users[i]);
-            	float overtime = calculate_overtime(&users[i]);
-            	float gross_pay = calculate_gross_pay(&users[i]);
-            	float total_deduction = total_deductions(&users[i]);
-
-            	// Print employee details along with computed values
-            	printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, total_deduction);
-            	
-        	}
-            printf("=================================================================================================================================================\n");
-    	}
-    	
-    	printf(" ________________________________________________________\n");
-    	printf("|                                                        |\n");
-    	printf("|    [1] Edit salary                                     |\n");
-    	printf("|    [2] Delete employee                                 |\n");
-    	printf("|    [3] Add employee                                    |\n");
-    	printf("|    [4] Add positon                                     |\n");
-    	printf("|    [9] Back                                            |\n");
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
-    	// hanggang DITO!
-    	
-    	printf("\tEnter: ");
-    	scanf("%d", &choice);
-    
-    	switch (choice){
-    	
-    		case 1:
+    		case 'B':
     			printf("\nN/a\n");
     			break;
-    			
-    		case 2:
-    			delete_employee();
-    			break;
-    			
-    		case 3:
-    			add_employee();
-    			break;
-    			
-    		case 4:
-    			add_position();
-    			break;
-    			
-    		case 9:
+    		case 'X':
     			clean();
     			break;
-    			
     		default:
-    			clean();
     			printf("\n\t\t\tnot in option\n");
-    			while (getchar() != '\n');           // Clear the input buffer (consume remaining characters including newline)
-    			wait_clean();						 // Wait for keypress and clear console
     			break;
-    			
 		}
-		
-	}while (choice != 9);
+	}while(choice != 'X');
 	
 }
 
-// for deleting a specific employee
-void delete_employee() {
+void admin_manage(){
 	
-	int i;
-    clean(); // Clear console
-
-	// paayos ng design neto hindi pantay, magmula DITO!
-    printf(" ________________________________________________________\n");
-    printf("|                                                        |\n");
-    printf("|                   Delete Employee                      |\n");
-    printf("|                                                        |\n");
-    printf("|________________________________________________________|\n");
-
-    // Display employee list with IDs
-    if (numUsers == 1) {
-    	
-        printf("\n\nNo Employees registered.\n");
-        
-    } else {
-    	
-        // Paayos ng display neto hindi pantay, magmula DITO.
-		//design
-		printf("\n ________________________________________________________\n");
-    	printf("|                                                        |\n");
-    	printf("|                   Manage Employees                     |\n");
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
-    	
-    	// Check if there are any user account 
-    	if (numUsers == 1) {
-    	
-        	printf("\n\nNo Employees registered.\n");
-        	
-    	} else {
-    		
-        	printf("\nEmployee List:\n");
-        	printf("=================================================================================================================================================\n");
-        	printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Total Deductions\n");
-        	printf("=================================================================================================================================================\n");
-
-        	// Loop through each user and display their details
-        	for (i = 1; i < numUsers; i++) {
-        		
-            	// Calculate basic salary, overtime, and gross pay
-            	float basic_salary = calculate_basic_salary(&users[i]);
-            	float overtime = calculate_overtime(&users[i]);
-            	float gross_pay = calculate_gross_pay(&users[i]);
-            	float total_deduction = total_deductions(&users[i]);
-
-            	// Print employee details along with computed values
-            	printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, total_deduction);
-            	
-        	}
-            printf("=================================================================================================================================================\n");
-    	}
-	// hanggang DITO!
-	
-	
-        // Prompt for employee number to delete
-        printf("\nEnter the number of the employee to delete: ");
-        int id;
-        scanf("%d", &id);
-        getchar(); // Consume the newline character left in the input buffer
-
-        // Validate ID
-        if (id >= 0 && id <= numUsers) {
-        	
-            // Check if the selected user is the admin
-            if (strcmp(users[id].usernames, "admin") == 0) {
-            	
-                printf("\nYou cannot delete the admin account.\n");
-            } else {
-            	
-                // Shift elements to remove the selected employee // Shifts the selected id number "i" to the last element of array
-                for (i = id; i < numUsers - 1; i++) {
-                	
-                    users[i] = users[i + 1]; // Shifts the selected id number
-                }
-                
-                numUsers--; // Decrement the number of users
-                printf("\nEmployee deleted successfully.\n");
-            }
-        } else {
-            printf("\nInvalid employee ID.\n");
-        }
-    }
-
-    wait_clean(); // Wait for keypress and clear console
-}
-
-// register's new employee "ONLY ADMIN CAN REGISTER"
-void add_employee(){
-	
-	int i;
-	char new_username[MAX_USER_LENGTH];
+	char choice;
 	
 	clean();
 	
-	// Check if positions are available
-	if (numPositions == 0){
-		
-		printf("\n\tNo positions are available. Please add a position first\n");
-		wait_clean();	// Wait for keypress and clear console
-		return;
-	}
+	do{
+		//design
+		printf("\n**********************************************************\n");
+    	printf("*                                                        *\n");
+    	printf("*                   Manage Employees                     *\n");
+    	printf("*                                                        *\n");
+    	printf("**********************************************************\n");
+    	printf("*                                                        *\n");
+    	printf("*    [A] Edit salary                                     *\n");
+    	printf("*    [B] Delete employee                                 *\n");
+    	printf("*    [C] Add employee                                    *\n");
+    	printf("*    [X] Back                                            *\n");
+    	printf("*                                                        *\n");
+    	printf("**********************************************************\n");
+    	printf("\tEnter: ");
+    	scanf(" %c", &choice);
+    	choice = toupper(choice);
+    	getchar(); // Consume the newline character left in the input buffer
+    
+    	switch (choice){
+    	
+    		case 'A':
+    			printf("\nN/a\n");
+    			break;
+    		case 'B':
+    			printf("\nN/a\n");
+    			break;
+    		case 'C':
+    			add_employee();
+    			break;
+    		case 'X':
+    			clean();
+    			break;
+    		default:
+    			printf("\n\t\t\tnot in option\n");
+    			break;
+		}
+	}while(choice != 'X');
 	
-	// Check if maximum number of users reached
+}
+
+void add_employee(){
+	
+	clean();
+	
 	if (numUsers >= MAX_USERS) {
-		
-        printf("\n\t\tMaximum number of users reached.\n");
+        printf("Maximum number of users reached.\n");
         return;
     }
 
-	// need I-rework design
     printf("\n\t\tRegister New Employee\n\n");
     
-    User new_user;
     
-    do{
-    	
-    	printf("\tEnter Username: ");
-    	scanf("%s", new_username);
-    	
-    	// checks if username already exist
-    	if(find_user(new_username) != NULL){
-    		
-    		printf("\n\tUsername already exists. Try again.\n");
-        	wait_clean();	// Wait for keypress and clear console
-		}else{
-			
-			strcpy(new_user.usernames, new_username);	// Copy new_username to new_user.usernames
-		}
-		
-	}while (find_user(new_username) != NULL);
+    printf("Username: ");
+    fgets(usernames[numUsers], MAX_NAME_LENGTH, stdin);
+    strtok(usernames[numUsers], "\n"); // Remove the trailing newline character
+
+    printf("Password: ");
+    fgets(passwords[numUsers], MAX_PASSWORD_LENGTH, stdin);
+    strtok(passwords[numUsers], "\n"); // Remove the trailing newline character
+
+    printf("Name: ");
+    fgets(name[numUsers], MAX_NAME_LENGTH, stdin);
+    strtok(name[numUsers], "\n"); // Remove the trailing newline character
+
+    printf("Address: ");
+    fgets(address[numUsers], MAX_NAME_LENGTH, stdin);
+    strtok(address[numUsers], "\n"); // Remove the trailing newline character
+
+    printf("Position: ");
+    fgets(position[numUsers], MAX_LENGTH, stdin);
+    strtok(position[numUsers], "\n"); // Remove the trailing newline character
+
+    printf("Contact: ");
+    scanf("%d", &contact[numUsers]);
+    getchar(); // Consume the newline character left in the input buffer after scanf
     
+    userTypes[numUsers] = 0;
     
-    
-    printf("\tEnter Password: ");
-    scanf("%s", new_user.passwords);
-    getchar(); // Consume the newline character left in the input buffer
-    
-    printf("\tEnter Name: ");
-    scanf("%[^\n]s", new_user.names);    // Use %[^\n] to read the entire line including spaces
-    
-    printf("\tEnter Contact: "); 
-    scanf("%d", &new_user.contacts);
-    
-    printf("\n\n\t\tEmployee Salary Computation\n\n");
-    
-    // Display available positions
-    int chosen_index;
-    
-    do{
-    	
-    	chosen_index = 0;
-    	
-    	printf("\n\t\tAvailable Positions\n\n");
-    
-    	for(i = 0; i < numPositions; i++){
-    	
-    	
-    		printf("\t\t[%d] %s\n", i + 1, positions[i].position_name);
-		}
-    
-    	
-    	printf("\n\tChoose Position (Enter number): ");
-    	scanf("%d", &chosen_index);
-    
-    	// Validate the chosen position index
-        if (chosen_index < 1 || chosen_index > numPositions) {
-        	
-        	clean();
-            printf("\n\tInvalid position choice. Please choose a valid position.\n");
-        }
-        
-	}while (chosen_index < 1 || chosen_index > numPositions);
-    
-    new_user.chosen_position = positions[chosen_index - 1]; // Assign chosen position // adjust to 0 based index
-    
-    printf("\tEnter Total number of hours worked (in a month): "); 
-    scanf("%f", &new_user.work_hours);
-    
-    printf("\tEnter Total number of overtime hours worked (in a month): "); 
-    scanf("%f", &new_user.overtime_hours);
-    
-    printf("\tEnter Total Bonuses (in a month): "); 
-    scanf("%f", &new_user.bonus);
-    
-    new_user.userTypes = 0; // automatically set to employee
-    
-    users[numUsers] = new_user;
-    numUsers++;
 
     printf("\tRegistration successful.\n");
+
+    numUsers++;
     
     wait_clean();
     
-}
-
-// basic salary computation
-float calculate_basic_salary(User* user){
-	
-	return user->work_hours * user->chosen_position.hourly_rates;
-}
-
-// overtime pay calculation
-float calculate_overtime(User* user){
-	
-	return user->overtime_hours * user->chosen_position.overtime_rates;
-}
-
-// gross pay computation
-float calculate_gross_pay(User* user){
-	
-	return calculate_basic_salary(user) + calculate_overtime(user) + user->bonus;
 }
 
 //clears console
@@ -846,382 +516,4 @@ void wait_clean(){
 	system("cls"); // Clear console on Windows
 }
 
-// change password
-void change_password(User* user){
-	
-	clean();
-	
-	char currentPassword[MAX_PASSWORD_LENGTH];
-	
-    printf("\n\tEnter current password: ");
-    scanf("%s", currentPassword);
-    
-    // checks current password
-    if (strcmp(currentPassword, user->passwords) == 0) { 
-    	
-        printf("\n\tEnter new password: ");
-        scanf("%s", user->passwords);
-            
-        printf("\n\tPassword updated successfully.\n");
-        wait_clean();
-            
-    } else {
-    	
-        printf("\n\tIncorrect password. Password not updated.\n");
-        wait_clean();
-    }
-    
-}
-
-// for changing username
-void change_username(User* user){
-	
-	char new_username[MAX_USER_LENGTH];
-	clean();
-	
-	do{
-		
-		printf("\n\tEnter new username: ");
-    	scanf(" %s", new_username);
-		
-		// checks if username already exist
-		if(find_user(new_username) != NULL){
-			
-			printf("\n\tUsername already exists. Try again.\n");
-        	wait_clean(); // Wait for keypress and clear console
-		}else{
-			
-			strcpy(user->usernames, new_username);
-		}
-		 
-	}while (find_user(new_username) != NULL);
-	
-	//getchar(); // Consume the newline character left in the input buffer
-    printf("\n\tUsername updated successfully.\n");
-    
-    wait_clean();
-}
-
-// for changing name
-void change_name(User* user){
-	
-	clean();
-	
-	printf("\n\tEnter new name: ");
-    scanf(" %[^\n]", user->names); // Use %[^\n] to read the entire line including spaces
-    getchar(); // Consume the newline character left in the input buffer
-    printf("\n\tName updated successfully.\n");
-    
-    wait_clean();
-}
-
-// for changing contact
-void change_contact(User* user){
-	
-	clean();
-	
-	//getchar(); // Consume the newline character left in the input buffer
-	printf("\n\tEnter new contact: ");
-    scanf("%d", &user->contacts); 
-    printf("\n\tContact updated successfully.\n");
-    
-    wait_clean();
-}
-
-// for adding employee position
-void add_position(User* user){
-	
-	clean();
-	
-	// checks if the maximum number of positions has been reached
-	if(numPositions >= MAX_POSITION){
-		
-		printf("\n\n\t\tMaximum positions reached.\n\n");
-		wait_clean();
-		return;
-	}
-	
-	printf("\n\n\t\tAdd new position\n\n");
-	
-	Position new_position;
-	
-	printf("\n\n\t\tEnter Position Name: ");
-	scanf("%s", new_position.position_name);
-	
-	printf("\n\n\t\tEnter Basic Salary Rate (Per Hour): ");
-	scanf("%f", &new_position.hourly_rates);
-	
-	
-	printf("\n\n\t\tEnter Overtime Rate (Per Hour): ");
-	scanf("%f", &new_position.overtime_rates);
-	
-	positions[numPositions] = new_position;
-	numPositions++;
-	
-	printf("\n\t\tPosition Added Succesfully");
-	
-	wait_clean();
-}
-
-// tax computation
-float tax_computation(User* user){
-	
-	float gross_pay = calculate_gross_pay(user);
-	float tax = 0.0;
-	
-	// The following are based on Tax table of 2022
-	
-	if (gross_pay < 0) {
-		
-        // Handle potential error if gross pay is negative
-        return tax = 404; // Indicating an error 
-        
-    } else if (gross_pay >= 666667) {
-    	
-        tax = 200833.33 + ((gross_pay - 666667) * 0.35); // 200,833.33 + 35% tax rate
-    } else if (gross_pay >= 166667) {
-    	
-        tax = 40833.33 + ((gross_pay - 166667) * 0.32); // 40,833.33 + 32% tax rate 
-    } else if (gross_pay >= 66667) {
-    	
-        tax = 10833.33 + ((gross_pay - 66667) * 0.30); // 10,833.33 + 30% tax rate
-    } else if (gross_pay >= 33333) {
-    	
-        tax = 2500 + ((gross_pay - 33333) * 0.25); // 2,500 + 25% tax rate
-    } else if (gross_pay >= 20833) {
-    	
-        tax = (gross_pay - 20833) * 0.20; // 20% tax rate
-    } else {
-    	
-        tax = 0.0; // No tax for gross pay below 20,833
-    }
-	
-	return tax;
-}
-
-// SSS computation
-float sss_computation(User* user){
-	
-	float gross_pay = calculate_gross_pay(user);
-	float sss = 0.0;
-	
-	if (gross_pay < 0) {
-		
-		// Handle potential error if gross pay is negative
-        return sss = 404; // Indicating an error 
-	} else if (gross_pay >= 29750) {
-		
-		sss = 1350.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 29250) {
-		
-		sss = 1327.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 28750) {
-		
-		sss = 1305.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 28250) {
-		
-		sss = 1282.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 27750) {
-		
-		sss = 1260.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 27250) {
-		
-		sss = 1237.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 26750) {
-		
-		sss = 1215.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 26250) {
-		
-		sss = 1192.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 25750) {
-		
-		sss = 1170.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 25250) {
-		
-		sss = 1147.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 24750) {
-		
-		sss = 1125.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 24250) {
-		
-		sss = 1102.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 23750) {
-		
-		sss = 1080.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 23250) {
-		
-		sss = 1057.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 22750) {
-		
-		sss = 1035.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 22250) {
-		
-		sss = 1012.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 21750) {
-		
-		sss = 990.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 21250) {
-		
-		sss = 967.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 20750) {
-		
-		sss = 945.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 20250) {
-		
-		sss = 922.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 19750) {
-		
-		sss = 900.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 19250) {
-		
-		sss = 877.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 18750) {
-		
-		sss = 855.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 18250) {
-		
-		sss = 832.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 17750) {
-		
-		sss = 810.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 17250) {
-		
-		sss = 787.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 16750) {
-		
-		sss = 765.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 16250) {
-		
-		sss = 742.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 15750) {
-		
-		sss = 720.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 15250) {
-		
-		sss = 697.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 14750) {
-		
-		sss = 675.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 14250) {
-		
-		sss = 652.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 13750) {
-		
-		sss = 630.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 13250) {
-		
-		sss = 607.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 12750) {
-		
-		sss = 585.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 12250) {
-		
-		sss = 562.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 11750) {
-		
-		sss = 540.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 11250) {
-		
-		sss = 517.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 10750) {
-		
-		sss = 495.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 10250) {
-		
-		sss = 472.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 9750) {
-		
-		sss = 450.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 9250) {
-		
-		sss = 427.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 8750) {
-		
-		sss = 405.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 8250) {
-		
-		sss = 382.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 7750) {
-		
-		sss = 360.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 7250) {
-		
-		sss = 337.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 6750) {
-		
-		sss = 315.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 6250) {
-		
-		sss = 292.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 5750) {
-		
-		sss = 270.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 5250) {
-		
-		sss = 247.50; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 4750) {
-		
-		sss = 225.0; // based to Monthly SSS Contribution Table
-	} else if (gross_pay >= 4250) {
-		
-		sss = 202.50; // based to Monthly SSS Contribution Table
-	} else {
-		
-		sss = 180.0; // based to Monthly SSS Contribution Table
-	}
-	
-	return sss;
-}
-
-// calculates Pagibig deductions
-float pagibig_computation(User* user){
-	
-	float gross_pay = calculate_gross_pay(user);
-	float pagibig = 0.0;
-	
-	if (gross_pay < 0) {
-		
-		// Handle potential error if gross pay is negative
-        return pagibig = 404; // Indicating an error 
-	} else if (gross_pay >= 10000) {
-		
-		pagibig = 200.0; // if gross pay is equal or over 10,000, P100.00 is the maximum deductions
-	} else if (gross_pay >= 1500) {
-		
-		pagibig = gross_pay * 0.02; // 2% rate
-	} else {
-		
-		pagibig = gross_pay * 0.01; // 1% rate
-	}
-	
-	return pagibig;
-}
-
-// calculates Philhealth deductions
-float philhealth_computation(User* user){
-	
-	float gross_pay = calculate_gross_pay(user);
-	float philhealth = 0.0;
-	
-	if (gross_pay < 0) {
-		
-		// Handle potential error if gross pay is negative
-        return philhealth = 404; // Indicating an error 
-	} else {
-		
-		philhealth = (gross_pay * 0.05) / 2; // 5% rate based to 2024 philhealth contribution
-	}
-	
-	return philhealth;
-}
-
-float total_deductions(User* user){
-	
-	return tax_computation(user) + sss_computation(user) + pagibig_computation(user) + philhealth_computation(user);
-}
-
-float netpay(User* user){
-	
-	return calculate_gross_pay(user) - total_deductions(user);
-}
 
