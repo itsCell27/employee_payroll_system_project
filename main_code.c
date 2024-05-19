@@ -85,9 +85,11 @@ void user_info_update(User* user);	   // displays & allows change of employee in
 // admin menu
 void admin(User* user);				   // admin main-menu
 void admin_manage(User* user);		   // menu to manage employees
+void edit_salary();					   // for  editing employee salary
 void add_employee();				   // register's new employee
 void delete_employee();                // for deleting a specific employee
 void add_position();		   		   // for adding different employee positions
+void change_employee_position();       // for changing employee position
 
 // salary computations
 float calculate_basic_salary(User* user);   // calculates basic salary
@@ -375,7 +377,7 @@ void user_payslip(User* user){
     	printf("| Philhealth: %.2f                                       \n", philhealth);
     	printf("| Total Deductions: %.2f                                 \n", total_deduction);
     	printf("|                                                        |\n");
-    	printf("| Net Pay: %.2f                                              \n", netpays);
+    	printf("| Net Pay: %.2f                                          \n", netpays);
     	printf("|________________________________________________________|\n");
     	printf("|                                                        |\n");
     	printf("|    [9] Back                                            |\n");
@@ -529,6 +531,7 @@ void admin_manage(User* user){
 	
 	clean();
 	
+	
 	do{
 		// Paayos ng display neto hindi pantay, magmula DITO.
 		//design
@@ -541,7 +544,7 @@ void admin_manage(User* user){
     	// Check if there are any user account 
     	if (numUsers == 1) {
     	
-        	printf("\n\nNo Employees registered.\n");
+        	printf("\n\n\tNo Employees registered.\n");
         	
     	} else {
     		
@@ -568,10 +571,11 @@ void admin_manage(User* user){
     	
     	printf(" ________________________________________________________\n");
     	printf("|                                                        |\n");
-    	printf("|    [1] Edit salary                                     |\n");
-    	printf("|    [2] Delete employee                                 |\n");
-    	printf("|    [3] Add employee                                    |\n");
-    	printf("|    [4] Add positon                                     |\n");
+    	printf("|    [1] Add employee                                    |\n");
+    	printf("|    [2] Add position                                    |\n");
+    	printf("|    [3] Delete employee                                 |\n");
+    	printf("|    [4] Edit salary                                     |\n");
+    	printf("|    [5] Change employee position                        |\n");
     	printf("|    [9] Back                                            |\n");
     	printf("|                                                        |\n");
     	printf("|________________________________________________________|\n");
@@ -583,19 +587,23 @@ void admin_manage(User* user){
     	switch (choice){
     	
     		case 1:
-    			printf("\nN/a\n");
-    			break;
-    			
-    		case 2:
-    			delete_employee();
-    			break;
-    			
-    		case 3:
     			add_employee();
     			break;
     			
-    		case 4:
+    		case 2:
     			add_position();
+    			break;
+    			
+    		case 3:
+    			delete_employee();
+    			break;
+    			
+    		case 4:
+    			edit_salary();
+    			break;
+    		
+    		case 5:
+    			change_employee_position();
     			break;
     			
     		case 9:
@@ -615,6 +623,120 @@ void admin_manage(User* user){
 	
 }
 
+// for editing employee salary
+void edit_salary() {
+	
+	int i;
+    int id;
+    int choice;
+    float new_value;
+
+	do{
+		
+		clean();
+		
+		if(numUsers == 1){
+    	
+    		printf("\n\n\tNo Employees registered.\n");
+    		wait_clean();
+    		return;
+		}
+
+    	printf("\nEmployee List:\n");
+        printf("=================================================================================================================================================\n");
+        printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Total Deductions\n");
+        printf("=================================================================================================================================================\n");
+
+        // Loop through each user and display their details
+        for (i = 1; i < numUsers; i++) {
+        		
+            // Calculate basic salary, overtime, and gross pay
+            float basic_salary = calculate_basic_salary(&users[i]);
+            float overtime = calculate_overtime(&users[i]);
+            float gross_pay = calculate_gross_pay(&users[i]);
+            float total_deduction = total_deductions(&users[i]);
+
+            // Print employee details along with computed values
+            printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, total_deduction);
+            	
+        }
+        printf("=================================================================================================================================================\n");
+
+    	// Prompt for employee ID to change details
+    	printf("\nEnter the ID of the employee whose details you want to change: ");
+    	scanf("%d", &id);
+    	
+
+    	// Validate ID
+    	if (id < 1 || id >= numUsers) {  // Adjusted to start ID from 1 and ensure it's within the valid range
+    
+        	printf("\nInvalid employee ID.\n");
+        	wait_clean();
+       		return;
+    	}
+    	
+	}while (id < 1 || id >= numUsers);
+    
+	
+		
+		// Display options to change
+   		printf(" ________________________________________________________\n");
+    	printf("|                                                        |\n");
+    	printf("|    Select the detail to change                         |\n");
+    	printf("|                                     					 |\n");
+    	printf("|    [1] Work Hours                          	         |\n");
+    	printf("|    [2] Overtime Hours                                  |\n");
+    	printf("|    [3] Bonus                                           |\n");
+    	printf("|    [9] Cancel                                          |\n");
+	    printf("|                                                        |\n");
+	    printf("|________________________________________________________|\n\n");
+    	
+    	printf("\n\tEnter your choice: ");
+    	scanf("%d", &choice);
+
+    	// Validate choice and update the corresponding detail
+    	switch (choice) {
+    	
+        	case 1:
+            	printf("\nEnter new Work Hours: ");
+            	scanf("%f", &new_value);
+            	users[id].work_hours = new_value;
+            	printf("\nWork Hours updated successfully for employee '%s'.\n", users[id].usernames);
+            	wait_clean();
+            	break;
+            
+        	case 2:
+            	printf("\nEnter new Overtime Hours: ");
+            	scanf("%f", &new_value);
+            	users[id].overtime_hours = new_value;
+            	printf("\nOvertime Hours updated successfully for employee '%s'.\n", users[id].usernames);
+            	wait_clean();
+            	break;
+            
+        	case 3:
+            	printf("\nEnter new Bonus: ");
+            	scanf("%f", &new_value);
+            	users[id].bonus = new_value;
+            	printf("\nBonus updated successfully for employee '%s'.\n", users[id].usernames);
+            	wait_clean();
+            	break;
+            
+        	case 9:
+        		printf("\nOperation Cancelled\n");
+    			wait_clean();
+    			break;
+            
+        	default:
+            	clean();
+    			printf("\n\t\t\tnot in option\n");
+    			while (getchar() != '\n');           // Clear the input buffer (consume remaining characters including newline)
+    			wait_clean();						 // Wait for keypress and clear console
+    			break;
+            
+    	}
+
+}
+
 // for deleting a specific employee
 void delete_employee() {
 	
@@ -631,18 +753,11 @@ void delete_employee() {
     // Display employee list with IDs
     if (numUsers == 1) {
     	
-        printf("\n\nNo Employees registered.\n");
+        printf("\n\n\tNo Employees registered.\n");
         
     } else {
     	
         // Paayos ng display neto hindi pantay, magmula DITO.
-		//design
-		printf("\n ________________________________________________________\n");
-    	printf("|                                                        |\n");
-    	printf("|                   Manage Employees                     |\n");
-    	printf("|                                                        |\n");
-    	printf("|________________________________________________________|\n");
-    	
     	// Check if there are any user account 
     	if (numUsers == 1) {
     	
@@ -674,7 +789,7 @@ void delete_employee() {
 	
 	
         // Prompt for employee number to delete
-        printf("\nEnter the number of the employee to delete: ");
+        printf("\n\n\tEnter the number of the employee to delete: ");
         int id;
         scanf("%d", &id);
         getchar(); // Consume the newline character left in the input buffer
@@ -685,7 +800,7 @@ void delete_employee() {
             // Check if the selected user is the admin
             if (strcmp(users[id].usernames, "admin") == 0) {
             	
-                printf("\nYou cannot delete the admin account.\n");
+                printf("\n\tYou cannot delete the admin account.\n");
             } else {
             	
                 // Shift elements to remove the selected employee // Shifts the selected id number "i" to the last element of array
@@ -695,10 +810,11 @@ void delete_employee() {
                 }
                 
                 numUsers--; // Decrement the number of users
-                printf("\nEmployee deleted successfully.\n");
+                printf("\n\tEmployee deleted successfully.\n");
             }
         } else {
-            printf("\nInvalid employee ID.\n");
+        	
+            printf("\n\tInvalid employee ID.\n");
         }
     }
 
@@ -1215,6 +1331,7 @@ float philhealth_computation(User* user){
 	return philhealth;
 }
 
+// calculates Total deductions
 float total_deductions(User* user){
 	
 	return tax_computation(user) + sss_computation(user) + pagibig_computation(user) + philhealth_computation(user);
@@ -1223,5 +1340,104 @@ float total_deductions(User* user){
 float netpay(User* user){
 	
 	return calculate_gross_pay(user) - total_deductions(user);
+}
+
+void change_employee_position() {
+	
+    int i;
+    clean(); // Clear console
+    
+    // Checks if their are any employee registered
+    if(numUsers == 1){
+    	
+    	printf("\n\n\tNo Employees registered.\n");
+    	wait_clean();
+    	return;
+	}
+	
+	// Check if positions are available
+	if (numPositions == 0){
+		
+		printf("\n\tNo positions are available. Please add a position first\n");
+		wait_clean();	// Wait for keypress and clear console
+		return;
+	}
+
+    printf(" ________________________________________________________\n");
+    printf("|                                                        |\n");
+    printf("|                Change Employee Position                |\n");
+    printf("|                                                        |\n");
+    printf("|________________________________________________________|\n");
+
+    // Display employee list with IDs
+    if (numUsers <= 1) { // Check if there are no employees registered
+    
+        printf("\n\nNo Employees registered.\n");
+        wait_clean();
+        return;
+        
+    } else {
+
+        printf("\nEmployee List:\n");
+        printf("=================================================================================================================================================\n");
+        printf("|ID\t|Name\t\t\t|Position\t\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Total Deductions\n");
+        printf("=================================================================================================================================================\n");
+
+        // Loop through each user and display their details
+        for (i = 1; i < numUsers; i++) {
+            // Calculate basic salary, overtime, and gross pay
+            float basic_salary = calculate_basic_salary(&users[i]);
+            float overtime = calculate_overtime(&users[i]);
+            float gross_pay = calculate_gross_pay(&users[i]);
+            float total_deduction = total_deductions(&users[i]);
+
+            // Print employee details along with computed values
+            printf("|%d\t|%-20s|%-20s|%.2f\t\t|%.2f\t\t|%.2f\t|%.2f\t\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, total_deduction);
+        }
+        printf("=================================================================================================================================================\n");
+
+        // Prompt for employee ID to change position
+        printf("\nEnter the ID of the employee to change position: ");
+        int id;
+        scanf("%d", &id);
+        getchar(); // Consume the newline character left in the input buffer
+
+        // Validate ID
+        if (id > 0 && id < numUsers) {
+        	
+            // Display available positions
+            int chosen_index;
+            
+            do {
+            	
+                printf("\nAvailable Positions:\n");
+                for (i = 0; i < numPositions; i++) {
+                	
+                    printf("[%d] %s\n", i + 1, positions[i].position_name);
+                }
+                
+                printf("Choose new position (Enter number): ");
+                scanf("%d", &chosen_index);
+                getchar(); // Consume the newline character left in the input buffer
+
+                // Validate the chosen position index
+                if (chosen_index < 1 || chosen_index > numPositions) {
+                	
+                    clean();
+                    printf("\nInvalid position choice. Please choose a valid position.\n");
+                }
+                
+            } while (chosen_index < 1 || chosen_index > numPositions);
+
+            users[id].chosen_position = positions[chosen_index - 1]; // Assign chosen position
+
+            printf("\nEmployee position updated successfully.\n");
+        } else {
+        	
+            printf("\nInvalid employee ID.\n");
+        }
+    }
+
+    wait_clean(); // Wait for keypress and clear console
 }
 
