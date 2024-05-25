@@ -40,7 +40,7 @@ typedef struct{
 	char passwords[MAX_PASSWORD_LENGTH]; 		// password of the user
 	char usernames[MAX_USER_LENGTH];     		// username of the employee or admin   
 	char names[MAX_CHAR];				 	    // name of the employee
-	int contacts;						 		// contact number of the employee
+	char contacts[11]; 							// Char array to handle contact number validation, max 10 digits + null terminator // contact number of the employee
 	
 	
 	float work_hours;      				 		// total number of hours worked (in a Month).
@@ -76,6 +76,10 @@ void change_username(User* user);      // changes user username
 void change_name(User* user);          // changes user name
 void change_contact(User* user);       // changes user contact
 void login_system();				   // user login menu
+int is_valid_username(char* username); // Check if the username contains any spaces 
+int is_valid_password(char* password); // Check if the password contains any spaces
+int is_valid_contact(char* contact);   // Function to check if the contact number is at most 10 digits and only contains digits
+void forgot_password();				   // Function for password reset
 
 // employee menu
 void user(User* user);                 // employee main-menu
@@ -104,7 +108,6 @@ float philhealth_computation(User* user);	// calculates Philhealth deductions
 float total_deductions(User* user);         // calculates total deductions
 
 float netpay(User* user);                   // calculates Netpay = gross pay - total deductions
-
 
 int main() {
 	
@@ -135,6 +138,7 @@ void main_menu(){
     	printf("|________________________________________________________|\n");
     	printf("|                                                        |\n");
     	printf("|    [1] Login                                           |\n");
+    	printf("|    [2] Forgot Password                                 |\n");
     	printf("|    [9] Exit                                            |\n");
     	printf("|                                                        |\n");
     	printf("|________________________________________________________|\n");
@@ -146,6 +150,10 @@ void main_menu(){
     	
     		case 1:
     			login_system();
+    			break;
+    			
+    		case 2:
+    			forgot_password();
     			break;
     			
     		case 9:
@@ -272,6 +280,60 @@ void login_system(){
     
 }
 
+// Function to handle forgot password
+void forgot_password() {
+	
+    char username[MAX_USER_LENGTH];
+    char contact[11];
+    
+    clean();
+    
+    printf("\t\tForgot Password\n\n");
+    printf("\tEnter your username: ");
+    scanf("%s", username);
+    
+    // Find the user with the given username
+    User *user = find_user(username);
+    
+    if (user != NULL) {
+    	
+        printf("\tEnter your contact number: ");
+        scanf("%s", contact);
+        
+        // Check if the entered contact number matches the user's contact number
+        if (strcmp(user->contacts, contact) == 0) {
+        	
+            char new_password[MAX_PASSWORD_LENGTH];
+            char confirm_password[MAX_PASSWORD_LENGTH];
+            
+            printf("\tEnter your new password: ");
+            scanf("%s", new_password);
+            
+            printf("\tConfirm your new password: ");
+            scanf("%s", confirm_password);
+            
+            // Check if the new password and confirmation match
+            if (strcmp(new_password, confirm_password) == 0) {
+            	
+                strcpy(user->passwords, new_password);
+                wait_clean();
+                printf("\tPassword successfully reset!\n");
+            } else {
+            	
+                printf("\tPasswords do not match. Please try again.\n");
+                wait_clean();
+            }
+        } else {
+        	
+            printf("\tContact number does not match. Password reset failed.\n");
+            wait_clean();
+        }
+    } else {
+    	
+        printf("\tUsername not found.\n");
+        wait_clean();
+    }
+}
 
 // Function for the user menu
 void user(User* user){
@@ -335,6 +397,8 @@ void user_payslip(User* user){
 	float philhealth = philhealth_computation(user);
 	float total_deduction = total_deductions(user);
 	float netpays = netpay(user);
+	
+	
 	
 	clean();
 	
@@ -796,7 +860,7 @@ void delete_employee() {
         
         if(id == 0){
         	
-        	printf("\nOperation Cancelled\n");
+        	printf("\n\tOperation Cancelled\n");
     		wait_clean();
     		return;
 		}
@@ -829,112 +893,205 @@ void delete_employee() {
 }
 
 // register's new employee "ONLY ADMIN CAN REGISTER"
-void add_employee(){
+void add_employee() {
 	
-	int i;
-	char new_username[MAX_USER_LENGTH];
-	
-	clean();
-	
-	// Check if positions are available
-	if (numPositions == 0){
-		
-		printf("\n\tNo positions are available. Please add a position first\n");
-		wait_clean();	// Wait for keypress and clear console
-		return;
-	}
-	
-	// Check if maximum number of users reached
-	if (numUsers >= MAX_USERS) {
-		
+    int i;
+    char new_username[MAX_USER_LENGTH];
+    char new_password[MAX_USER_LENGTH];
+    char confirmation;
+    
+    clean();
+    
+    // Check if positions are available
+    if (numPositions == 0) {
+    	
+        printf("\n\tNo positions are available. Please add a position first\n");
+        wait_clean(); // Wait for keypress and clear console
+        return;
+    }
+    
+    // Check if maximum number of users reached
+    if (numUsers >= MAX_USERS) {
+    	
         printf("\n\t\tMaximum number of users reached.\n");
+        wait_clean();
         return;
     }
 
-	// need I-rework design
     printf("\n\t\tRegister New Employee\n\n");
     
     User new_user;
     
-    do{
+    // Loop to get a valid username
+    do {
+        // Prompt for username
+        printf("\tEnter Username: ");
+        if (scanf("%s", new_username) != 1 || !is_valid_username(new_username)) {
+        	
+            printf("\n\tInvalid input. Username must not contain spaces. Please try again.\n");
+            while (getchar() != '\n'); // Clear input buffer
+            wait_clean();
+            continue;
+        }
+        
+        // Check if username already exists
+        if (find_user(new_username) != NULL) {
+        	
+            printf("\n\tUsername already exists. Try again.\n");
+            while (getchar() != '\n'); // Clear input buffer
+            wait_clean(); // Wait for keypress and clear console
+        } else {
+        	
+            strcpy(new_user.usernames, new_username); // Copy new_username to new_user.usernames
+        }
+        
+    } while (find_user(new_username) != NULL);
+    
+    // Loop to get a valid password
+    do {
     	
-    	printf("\tEnter Username: ");
-    	scanf("%s", new_username);
-    	
-    	// checks if username already exist
-    	if(find_user(new_username) != NULL){
-    		
-    		printf("\n\tUsername already exists. Try again.\n");
-        	wait_clean();	// Wait for keypress and clear console
-		}else{
-			
-			strcpy(new_user.usernames, new_username);	// Copy new_username to new_user.usernames
-		}
-		
-	}while (find_user(new_username) != NULL);
+        // Prompt for password
+        printf("\tEnter Password: ");
+        if (scanf("%s", new_password) != 1 || !is_valid_password(new_password)) {
+        	
+            printf("\n\tInvalid input. Password must not contain spaces. Please try again.\n");
+            while (getchar() != '\n'); // Clear input buffer
+            wait_clean();
+            continue;
+        }
+        
+        strcpy(new_user.passwords, new_password);
+        
+    } while (!is_valid_password(new_password));
     
+    // Clear the newline character left in the input buffer
+    while (getchar() != '\n');
     
-    
-    printf("\tEnter Password: ");
-    scanf("%s", new_user.passwords);
-    getchar(); // Consume the newline character left in the input buffer
-    
+    // Prompt for name
     printf("\tEnter Name: ");
-    scanf("%[^\n]s", new_user.names);    // Use %[^\n] to read the entire line including spaces
+    if (scanf("%[^\n]s", new_user.names) != 1) {
+    	
+        printf("\n\tInvalid input. Please try again.\n");
+        while (getchar() != '\n'); // Clear input buffer
+        wait_clean();
+        return;
+    }
     
-    printf("\tEnter Contact: "); 
-    scanf("%d", &new_user.contacts);
+    // Loop to get a valid contact number
+    do {
+    	
+        // Prompt for contact number
+        printf("\tEnter Contact (up to 10 digits): ");
+        if (scanf("%10s", new_user.contacts) != 1 || !is_valid_contact(new_user.contacts)) {
+        	
+            printf("\n\tInvalid input. Contact must be up to 10 digits and only contain numbers. Please try again.\n");
+            while (getchar() != '\n'); // Clear input buffer
+            wait_clean();
+            continue;
+        }
+        
+    } while (!is_valid_contact(new_user.contacts));
     
     printf("\n\n\t\tEmployee Salary Computation\n\n");
     
-    // Display available positions
+    // Display available positions and get a valid position choice
     int chosen_index;
+    do {
+    	
+        chosen_index = 0;
+        
+        printf("\n\t\tAvailable Positions\n\n");
     
-    do{
-    	
-    	chosen_index = 0;
-    	
-    	printf("\n\t\tAvailable Positions\n\n");
-    
-    	for(i = 0; i < numPositions; i++){
-    	
-    	
-    		printf("\t\t[%d] %s\n", i + 1, positions[i].position_name);
-		}
-    
-    	
-    	printf("\n\tChoose Position (Enter number): ");
-    	scanf("%d", &chosen_index);
-    
-    	// Validate the chosen position index
+        for (i = 0; i < numPositions; i++) {
+        	
+            printf("\t\t[%d] %s\n", i + 1, positions[i].position_name);
+        }
+        
+        // Prompt for position choice
+        printf("\n\tChoose Position (Enter number): ");
+        if (scanf("%d", &chosen_index) != 1) {
+        	
+            printf("\n\tInvalid input. Please enter a valid number.\n");
+            while (getchar() != '\n'); // Clear input buffer
+            wait_clean();
+            continue;
+        }
+        
+        // Validate the chosen position index
         if (chosen_index < 1 || chosen_index > numPositions) {
         	
-        	clean();
+            clean();
             printf("\n\tInvalid position choice. Please choose a valid position.\n");
         }
         
-	}while (chosen_index < 1 || chosen_index > numPositions);
+    } while (chosen_index < 1 || chosen_index > numPositions);
     
-    new_user.chosen_position = positions[chosen_index - 1]; // Assign chosen position // adjust to 0 based index
+    // Assign chosen position (adjust to 0-based index)
+    new_user.chosen_position = positions[chosen_index - 1];
     
-    printf("\tEnter Total number of hours worked (in a month): "); 
-    scanf("%f", &new_user.work_hours);
+    // Loop to get a valid number of hours worked
+    do {
+    	
+        // Prompt for total number of hours worked
+        printf("\tEnter Total number of hours worked (in a month, 1-170): ");
+        if (scanf("%f", &new_user.work_hours) != 1 || new_user.work_hours < 1 || new_user.work_hours > 170) {
+        	
+            printf("\n\tInvalid input. Please enter a valid number of hours (1-170).\n");
+            while (getchar() != '\n'); // Clear input buffer
+            wait_clean();
+            continue;
+        }
+        
+    } while (new_user.work_hours < 1 || new_user.work_hours > 170);
     
-    printf("\tEnter Total number of overtime hours worked (in a month): "); 
-    scanf("%f", &new_user.overtime_hours);
+    // Loop to get a valid number of overtime hours worked
+    do {
+        // Prompt for total number of overtime hours worked
+        printf("\tEnter Total number of overtime hours worked (in a month, 1-80): ");
+        if (scanf("%f", &new_user.overtime_hours) != 1 || new_user.overtime_hours < 1 || new_user.overtime_hours > 80) {
+        	
+            printf("\n\tInvalid input. Please enter a valid number of overtime hours (1-80).\n");
+            while (getchar() != '\n'); // Clear input buffer
+            wait_clean();
+            continue;
+        }
+        
+    } while (new_user.overtime_hours < 1 || new_user.overtime_hours > 80);
     
-    printf("\tEnter Total Bonuses (in a month): "); 
-    scanf("%f", &new_user.bonus);
+    // Prompt for total bonuses (one-time validation)
+    do {
+        printf("\tEnter Total Bonuses (in a month): ");
+        if (scanf("%f", &new_user.bonus) != 1) {
+        	
+            printf("\n\tInvalid input. Please enter a valid bonus amount.\n");
+            while (getchar() != '\n'); // Clear input buffer
+            wait_clean();
+            continue;
+        }
+        
+    } while (0); // Loop is not needed, just validate once
     
-    new_user.userTypes = 0; // automatically set to employee
+    // Prompt for confirmation before saving the new employee
+    printf("\n\tAre you sure you want to save this employee? (y/n): ");
+    while (getchar() != '\n'); // Clear any leftover newline character
+    confirmation = getchar();
     
-    users[numUsers] = new_user;
-    numUsers++;
-
-    printf("\tRegistration successful.\n");
+    if (confirmation == 'y' || confirmation == 'Y') {
+    	
+        // Automatically set user type to employee
+        new_user.userTypes = 0;
+        
+        // Add the new user to the users array and increment the user count
+        users[numUsers] = new_user;
+        numUsers++;
+        
+        printf("\tRegistration successful.\n");
+    } else {
+    	
+        printf("\tRegistration cancelled.\n");
+    }
     
     wait_clean();
-    
 }
 
 // basic salary computation
@@ -1081,7 +1238,7 @@ void add_position(User* user){
 	positions[numPositions] = new_position;
 	numPositions++;
 	
-	printf("\n\t\tPosition Added Succesfully");
+	printf("\n\t\tPosition Added Successfully");
 	
 	wait_clean();
 }
@@ -1392,6 +1549,7 @@ void change_employee_position() {
 
         // Loop through each user and display their details
         for (i = 1; i < numUsers; i++) {
+        	
             // Calculate basic salary, overtime, and gross pay
             float basic_salary = calculate_basic_salary(&users[i]);
             float overtime = calculate_overtime(&users[i]);
@@ -1447,4 +1605,52 @@ void change_employee_position() {
 
     wait_clean(); // Wait for keypress and clear console
 }
+
+int is_valid_username(char* username) {
+	
+    // Check if the username contains any spaces
+    for (int i = 0; i < strlen(username); i++) {
+    	
+        if (isspace(username[i])) {
+        	
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int is_valid_password(char* password) {
+	
+    // Check if the password contains any spaces
+    for (int i = 0; i < strlen(password); i++) {
+    	
+        if (isspace(password[i])) {
+        	
+            return 0;
+        }
+    }
+    return 1;
+}
+
+// Function to check if the contact number is at most 10 digits and only contains digits
+int is_valid_contact(char* contact) {
+	
+    int length = strlen(contact);
+    if (length > 10) {
+    	
+        return 0;
+    }
+    for (int i = 0; i < length; i++) {
+    	
+        if (!isdigit(contact[i])) {
+        	
+            return 0;
+        }
+    }
+    return 1;
+}
+
+
+
+
 
