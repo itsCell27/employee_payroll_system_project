@@ -68,19 +68,20 @@ char adminPassword[] = "admin123";	   // admin password
 void main_menu();                      // main-menu of employee payroll system
 
 
-User* find_user(const char *username); // Function to check if the username exists
-void clean();                          // clears console
-void wait_clean();                     // clears console after user press any key
-void change_password(User* user);      // changes user password
-void change_username(User* user);      // changes user username
-void change_name(User* user);          // changes user name
-void change_contact(User* user);       // changes user contact
-void login_system();				   // user login menu
-int is_valid_username(char* username); // Check if the username contains any spaces 
-int is_valid_password(char* password); // Check if the password contains any spaces
-int is_valid_contact(char* contact);   // Function to check if the contact number is at most 10 digits and only contains digits
-void forgot_password();				   // Function for password reset
-void clear_input_buffer();			   // Function to clear the input buffer
+User* find_user(const char *username); 			// Function to check if the username exists
+void clean();                          			// clears console
+void wait_clean();                     			// clears console after user press any key
+void change_password(User* user);      			// changes user password
+void change_username(User* user);      			// changes user username
+void change_name(User* user);          			// changes user name
+void change_contact(User* user);       			// changes user contact
+void login_system();				   			// user login menu
+int is_valid_username(char* username); 			// Check if the username contains any spaces 
+int is_valid_password(char* password); 			// Check if the password contains any spaces
+int is_valid_contact(char* contact);   			// Function to check if the contact number is at most 10 digits and only contains digits
+void forgot_password();				   			// Function for password reset
+void clear_input_buffer();			   			// Function to clear the input buffer
+int get_password(char *password, size_t size);  // hides password
 
 // employee menu
 void user(User* user);                 // employee main-menu
@@ -232,7 +233,8 @@ void login_system(){
     		do{
     			
     			printf("\t\tEnter Password: ");
-    			scanf("%s", password);
+    			get_password(password, sizeof(password)); // hides password
+    			
     		
 				if (strcmp(index->passwords, password) == 0) { // checks inputted password
 				
@@ -1765,8 +1767,9 @@ void change_employee_position() {
 
 int is_valid_username(char* username) {
 	
+	int i;
     // Check if the username contains any spaces
-    for (int i = 0; i < strlen(username); i++) {
+    for (i = 0; i < strlen(username); i++) {
     	
         if (isspace(username[i])) {
         	
@@ -1778,8 +1781,9 @@ int is_valid_username(char* username) {
 
 int is_valid_password(char* password) {
 	
+	int  i;
     // Check if the password contains any spaces
-    for (int i = 0; i < strlen(password); i++) {
+    for (i = 0; i < strlen(password); i++) {
     	
         if (isspace(password[i])) {
         	
@@ -1792,12 +1796,13 @@ int is_valid_password(char* password) {
 // Function to check if the contact number is at most 10 digits and only contains digits
 int is_valid_contact(char* contact) {
 	
+	int i;
     int length = strlen(contact);
     if (length > 10) {
     	
         return 0;
     }
-    for (int i = 0; i < length; i++) {
+    for (i = 0; i < length; i++) {
     	
         if (!isdigit(contact[i])) {
         	
@@ -1813,7 +1818,35 @@ void clear_input_buffer() {
     while ((c = getchar()) != '\n' && c != EOF) { }
 }
 
+// hides password
+int get_password(char *password, size_t size) {
+	int i = 0;
+	char ch;
 
+	while(1)
+	{
+		ch = _getch();
+		if (ch == '\r') 
+		{
+			break;
+		}
+		else if (ch == '\b')
+		{
+			if (i > 0)
+			{
+				printf("\b \b");
+				i--;
+			}
+		}
+		else if(i < size - 1)
+		{
+				password[i++] = ch;
+				printf("*");
+		}	
+	}
+	password[i] = '\0';
+	printf("\n");
+}
 
 
 
