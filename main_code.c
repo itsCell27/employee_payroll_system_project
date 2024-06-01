@@ -26,6 +26,8 @@
 #define USERS "users.csv"  		 		// File name
 #define POSITION "positions.csv" 		// File name
 #define OTP_LENGTH 4
+#define MAX_SPACE 20
+#define MAX_SPACE_POS 12
 
 // position structure
 typedef struct{
@@ -134,6 +136,10 @@ float netpay(User* user);                   // calculates Netpay = gross pay - t
 
 
 void enableVirtualTerminalProcessing();		// Enable virtual terminal processing for ANSI color support
+int count_float(float number);
+void space(int number);
+void string_space(int number);
+void string_space_pos(int number);
 
 int main() {
 	
@@ -908,23 +914,41 @@ void admin_manage(User* user){
     	} else {
     		
         	printf("\nEmployee List:\n");
-	        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
-	        printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Total Deductions\t|Net Pay\n");
-	        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
+	        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+	        printf("|ID |Name                |Position    |Basic Salary      |Overtime          |Bonus             |Total Earnings    |Total Deductions  |Net Pay           |\n");
+	        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 	
 	        // Loop through each user and display their details
 	        for (i = 1; i < numUsers; i++) {
+	        	
 	            // Calculate basic salary, overtime, and gross pay
 	            float basic_salary = calculate_basic_salary(&users[i]);
 	            float overtime = calculate_overtime(&users[i]);
 	            float gross_pay = calculate_gross_pay(&users[i]);
 	            float total_deduction = total_deductions(&users[i]);
 	            float netpays = netpay(&users[i]);
-	
-	            // Print employee details along with computed values
-	            printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, total_deduction, netpays);
+				
+				printf("|%d  ", i);
+				printf("|%s", users[i].names);
+				string_space(strlen(users[i].names));
+				printf("|%s", users[i].chosen_position.position_name);
+				string_space_pos(strlen(users[i].chosen_position.position_name));
+				printf("|%.2f", basic_salary);
+		        space(count_float(basic_salary));
+		        printf("|%.2f", overtime);
+		        space(count_float(overtime));
+		        printf("|%.2f", users[i].bonus);
+		        space(count_float(users[i].bonus));
+		        printf("|%.2f", gross_pay);
+		        space(count_float(gross_pay));
+		        printf("|%.2f", total_deduction);
+		        space(count_float(total_deduction));
+		        printf("|%.2f", netpays);
+		        space(count_float(netpays));
+		        printf("|\n");
+	            
 	        }
-	        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
+	        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
     	}
     	
     	printf(" ________________________________________________________\n");
@@ -1010,23 +1034,41 @@ void edit_employee(){
     	} else {
     		
         	printf("\nEmployee List:\n");
-	        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
-	        printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Total Deductions\t|Net Pay\n");
-	        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
+	        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+	        printf("|ID |Name                |Position    |Basic Salary      |Overtime          |Bonus             |Total Earnings    |Total Deductions  |Net Pay           |\n");
+	        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 	
 	        // Loop through each user and display their details
 	        for (i = 1; i < numUsers; i++) {
+	        	
 	            // Calculate basic salary, overtime, and gross pay
 	            float basic_salary = calculate_basic_salary(&users[i]);
 	            float overtime = calculate_overtime(&users[i]);
 	            float gross_pay = calculate_gross_pay(&users[i]);
 	            float total_deduction = total_deductions(&users[i]);
 	            float netpays = netpay(&users[i]);
-	
-	            // Print employee details along with computed values
-	            printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, total_deduction, netpays);
+				
+				printf("|%d  ", i);
+				printf("|%s", users[i].names);
+				string_space(strlen(users[i].names));
+				printf("|%s", users[i].chosen_position.position_name);
+				string_space_pos(strlen(users[i].chosen_position.position_name));
+				printf("|%.2f", basic_salary);
+		        space(count_float(basic_salary));
+		        printf("|%.2f", overtime);
+		        space(count_float(overtime));
+		        printf("|%.2f", users[i].bonus);
+		        space(count_float(users[i].bonus));
+		        printf("|%.2f", gross_pay);
+		        space(count_float(gross_pay));
+		        printf("|%.2f", total_deduction);
+		        space(count_float(total_deduction));
+		        printf("|%.2f", netpays);
+		        space(count_float(netpays));
+		        printf("|\n");
+	            
 	        }
-	        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
+	        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
     	}
     	
     	printf(" ________________________________________________________\n");
@@ -1096,23 +1138,41 @@ void record_tardiness_for_employee() {
         }
 
         printf("\nEmployee List:\n");
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
-        printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Total Deductions\t|Net Pay\n");
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("|ID |Name                |Position    |Basic Salary      |Overtime          |Bonus             |Total Earnings    |Total Deductions  |Net Pay           |\n");
+        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
         // Loop through each user and display their details
         for (i = 1; i < numUsers; i++) {
+        	
             // Calculate basic salary, overtime, and gross pay
             float basic_salary = calculate_basic_salary(&users[i]);
             float overtime = calculate_overtime(&users[i]);
             float gross_pay = calculate_gross_pay(&users[i]);
             float total_deduction = total_deductions(&users[i]);
             float netpays = netpay(&users[i]);
-
-            // Print employee details along with computed values
-            printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, total_deduction, netpays);
+			
+			printf("|%d  ", i);
+			printf("|%s", users[i].names);
+			string_space(strlen(users[i].names));
+			printf("|%s", users[i].chosen_position.position_name);
+			string_space_pos(strlen(users[i].chosen_position.position_name));
+			printf("|%.2f", basic_salary);
+	        space(count_float(basic_salary));
+	        printf("|%.2f", overtime);
+	        space(count_float(overtime));
+	        printf("|%.2f", users[i].bonus);
+	        space(count_float(users[i].bonus));
+	        printf("|%.2f", gross_pay);
+	        space(count_float(gross_pay));
+	        printf("|%.2f", total_deduction);
+	        space(count_float(total_deduction));
+	        printf("|%.2f", netpays);
+	        space(count_float(netpays));
+	        printf("|\n");
+            
         }
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
         // Prompt for employee ID to change details
         printf("\n\033[1;36mEnter the ID of the employee whose details you want to change: \033[1;0m");
@@ -1167,23 +1227,41 @@ void edit_salary() {
         }
 
         printf("\nEmployee List:\n");
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
-        printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Total Deductions\t|Net Pay\n");
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("|ID |Name                |Position    |Basic Salary      |Overtime          |Bonus             |Total Earnings    |Total Deductions  |Net Pay           |\n");
+        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
         // Loop through each user and display their details
         for (i = 1; i < numUsers; i++) {
+        	
             // Calculate basic salary, overtime, and gross pay
             float basic_salary = calculate_basic_salary(&users[i]);
             float overtime = calculate_overtime(&users[i]);
             float gross_pay = calculate_gross_pay(&users[i]);
             float total_deduction = total_deductions(&users[i]);
             float netpays = netpay(&users[i]);
-
-            // Print employee details along with computed values
-            printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, total_deduction, netpays);
+			
+			printf("|%d  ", i);
+			printf("|%s", users[i].names);
+			string_space(strlen(users[i].names));
+			printf("|%s", users[i].chosen_position.position_name);
+			string_space_pos(strlen(users[i].chosen_position.position_name));
+			printf("|%.2f", basic_salary);
+	        space(count_float(basic_salary));
+	        printf("|%.2f", overtime);
+	        space(count_float(overtime));
+	        printf("|%.2f", users[i].bonus);
+	        space(count_float(users[i].bonus));
+	        printf("|%.2f", gross_pay);
+	        space(count_float(gross_pay));
+	        printf("|%.2f", total_deduction);
+	        space(count_float(total_deduction));
+	        printf("|%.2f", netpays);
+	        space(count_float(netpays));
+	        printf("|\n");
+            
         }
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
         // Prompt for employee ID to change details
         printf("\n\033[1;36mEnter the ID of the employee whose details you want to change: \033[1;0m");
@@ -1291,23 +1369,41 @@ void edit_all_salary() {
         }
 
         printf("\nEmployee List:\n");
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
-        printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Total Deductions\t|Net Pay\n");
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("|ID |Name                |Position    |Basic Salary      |Overtime          |Bonus             |Total Earnings    |Total Deductions  |Net Pay           |\n");
+        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
         // Loop through each user and display their details
         for (i = 1; i < numUsers; i++) {
+        	
             // Calculate basic salary, overtime, and gross pay
             float basic_salary = calculate_basic_salary(&users[i]);
             float overtime = calculate_overtime(&users[i]);
             float gross_pay = calculate_gross_pay(&users[i]);
             float total_deduction = total_deductions(&users[i]);
             float netpays = netpay(&users[i]);
-
-            // Print employee details along with computed values
-            printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, total_deduction, netpays);
+			
+			printf("|%d  ", i);
+			printf("|%s", users[i].names);
+			string_space(strlen(users[i].names));
+			printf("|%s", users[i].chosen_position.position_name);
+			string_space_pos(strlen(users[i].chosen_position.position_name));
+			printf("|%.2f", basic_salary);
+	        space(count_float(basic_salary));
+	        printf("|%.2f", overtime);
+	        space(count_float(overtime));
+	        printf("|%.2f", users[i].bonus);
+	        space(count_float(users[i].bonus));
+	        printf("|%.2f", gross_pay);
+	        space(count_float(gross_pay));
+	        printf("|%.2f", total_deduction);
+	        space(count_float(total_deduction));
+	        printf("|%.2f", netpays);
+	        space(count_float(netpays));
+	        printf("|\n");
+            
         }
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
         // Prompt for employee ID to change details
         printf("\033[1;36m\nEnter the ID of the employee whose details you want to change:\033[1;0m ");
@@ -1392,23 +1488,41 @@ void delete_employee() {
     } else {
         // Display employee list
         printf("\nEmployee List:\n");
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
-        printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Total Deductions\t|Net Pay\n");
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("|ID |Name                |Position    |Basic Salary      |Overtime          |Bonus             |Total Earnings    |Total Deductions  |Net Pay           |\n");
+        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
         // Loop through each user and display their details
         for (i = 1; i < numUsers; i++) {
+        	
             // Calculate basic salary, overtime, and gross pay
             float basic_salary = calculate_basic_salary(&users[i]);
             float overtime = calculate_overtime(&users[i]);
             float gross_pay = calculate_gross_pay(&users[i]);
             float total_deduction = total_deductions(&users[i]);
             float netpays = netpay(&users[i]);
-
-            // Print employee details along with computed values
-            printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, total_deduction, netpays);
+			
+			printf("|%d  ", i);
+			printf("|%s", users[i].names);
+			string_space(strlen(users[i].names));
+			printf("|%s", users[i].chosen_position.position_name);
+			string_space_pos(strlen(users[i].chosen_position.position_name));
+			printf("|%.2f", basic_salary);
+	        space(count_float(basic_salary));
+	        printf("|%.2f", overtime);
+	        space(count_float(overtime));
+	        printf("|%.2f", users[i].bonus);
+	        space(count_float(users[i].bonus));
+	        printf("|%.2f", gross_pay);
+	        space(count_float(gross_pay));
+	        printf("|%.2f", total_deduction);
+	        space(count_float(total_deduction));
+	        printf("|%.2f", netpays);
+	        space(count_float(netpays));
+	        printf("|\n");
+            
         }
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
         // Prompt for employee number to delete
         printf("\033[1;36m\n\n\tEnter the number of the employee to delete (Enter 0 to cancel):\033[1;0m ");
@@ -2139,23 +2253,43 @@ void change_employee_position() {
         return;
     } else {
         printf("\nEmployee List:\n");
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
-        printf("|ID\t|Name\t|Position\t|Basic Salary\t|Overtime\t|Bonus\t|Total Earnings\t|Total Deductions\t|Net Pay\n");
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("|ID |Name                |Position    |Basic Salary      |Overtime          |Bonus             |Total Earnings    |Total Deductions  |Net Pay           |\n");
+        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
         // Loop through each user and display their details
         for (i = 1; i < numUsers; i++) {
+        	
             // Calculate basic salary, overtime, and gross pay
             float basic_salary = calculate_basic_salary(&users[i]);
             float overtime = calculate_overtime(&users[i]);
             float gross_pay = calculate_gross_pay(&users[i]);
             float total_deduction = total_deductions(&users[i]);
             float netpays = netpay(&users[i]);
-
-            // Print employee details along with computed values
-            printf("|%d\t|%s\t|%s\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\n", i, users[i].names, users[i].chosen_position.position_name, basic_salary, overtime, users[i].bonus, gross_pay, total_deduction, netpays);
+			
+			printf("|%d  ", i);
+			printf("|%s", users[i].names);
+			string_space(strlen(users[i].names));
+			printf("|%s", users[i].chosen_position.position_name);
+			string_space_pos(strlen(users[i].chosen_position.position_name));
+			printf("|%.2f", basic_salary);
+	        space(count_float(basic_salary));
+	        printf("|%.2f", overtime);
+	        space(count_float(overtime));
+	        printf("|%.2f", users[i].bonus);
+	        space(count_float(users[i].bonus));
+	        printf("|%.2f", gross_pay);
+	        space(count_float(gross_pay));
+	        printf("|%.2f", total_deduction);
+	        space(count_float(total_deduction));
+	        printf("|%.2f", netpays);
+	        space(count_float(netpays));
+	        printf("|\n");
+            
         }
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("---------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        
+        
 
         // Prompt for employee ID to change position
         printf("\nEnter the ID of the employee to change position: ");
@@ -2253,6 +2387,37 @@ int is_valid_contact(char* contact) {
 void clear_input_buffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF) { }
+}
+
+// Function to add spaces after names
+void string_space(int length) {
+    int spaces = 20 - length;
+    for (int i = 0; i < spaces; i++) {
+        printf(" ");
+    }
+}
+
+// Function to add spaces after position names
+void string_space_pos(int length) {
+    int spaces = 12 - length;
+    for (int i = 0; i < spaces; i++) {
+        printf(" ");
+    }
+}
+
+// Function to add spaces after numerical values
+void space(int length) {
+    int spaces = 18 - length;
+    for (int i = 0; i < spaces; i++) {
+        printf(" ");
+    }
+}
+
+// Function to count the number of digits in a float
+int count_float(float value) {
+    char buffer[20];
+    snprintf(buffer, sizeof(buffer), "%.2f", value);
+    return strlen(buffer);
 }
 
 // hides password
