@@ -175,7 +175,7 @@ void main_menu(){
 	
 	do{
 		//design
-		printf("\033[1;36m _ _ ______                 _                            _____                      _ _    _____           _                _ _  \033[0m\n");
+		  printf("\033[1;36m _ _ ______                 _                            _____                      _ _    _____           _                _ _  \033[0m\n");
     	printf("\033[1;36m( | |  ____|               | |                          |  __ \\                    | | |  / ____|         | |              ( | ) \033[0m\n");
     	printf("\033[1;36m V V| |__   _ __ ___  _ __ | | ___  _   _  ___  ___     | |__) __ _ _   _ _ __ ___ | | | | (___  _   _ ___| |_ ___ _ __ ___ V V  \033[0m\n");
     	printf("\033[1;36m    |  __| | '_ ` _ \\| '_ \\| |/ _ \\| | | |/ _ \\/ _ \\    |  ___/ _` | | | | '__/ _ \\| | |  \\___ \\| | | / __| __/ _ \\| '_ ` _ \\     \033[0m\n");
@@ -183,6 +183,7 @@ void main_menu(){
     	printf("\033[1;36m    |______|_| |_| |_| .__/|_|\\___/ \\__, |\\___|\\___|    |_|   \\__,_|\\__, |_|  \\___/|_|_| |_____/ \\__, |___/\\__\\___|_| |_| |_|    \033[0m\n");
     	printf("\033[1;36m                     | |             __/ |                           __/ |                        __/ |                          \033[0m\n");
     	printf("\033[1;36m                     |_|            |___/                           |___/                        |___/                           \033[0m\n");
+
     	printf("\n");
     	printf("                                 ________________________________________________________\n");
     	printf("                                |                                                        |\n");
@@ -197,6 +198,7 @@ void main_menu(){
     	printf("                                |________________________________________________________|\n");
     	printf("\n");
     	printf("\033[1;36m                                Enter: \033[0m");
+
     
     	scanf("%d", &choice);
     
@@ -443,7 +445,9 @@ void login_system(){
     		
     		do{
     			
+
     			printf("\033[1;36m \t\tEnter Password:\033[0m ");
+
     			get_password(password, sizeof(password)); // hides password
     			
     		
@@ -636,7 +640,9 @@ void user_payslip(User* user){
 	do{
 		//design & display payslip
 		printf("\n******************************************************************\n");
+
     	printf("\033[1;36m                     	Salary Payslip                     \033[1;0m\n");
+
     	printf("******************************************************************\n");
     	printf("\n");
     	printf(" Personal Information:\n");
@@ -674,7 +680,9 @@ void user_payslip(User* user){
     	printf("******************************************************************\n");
     	printf("     [9] Back\n");
     	printf("******************************************************************\n");
+
     	printf("\033[1;36m\tEnter: \033[1;0m");
+
     	scanf("%d", &choice);
     
     	switch (choice){
@@ -895,7 +903,9 @@ void admin_manage(User* user){
     			
     		default:
     			clean();
+
     			printf("\033[1;31m\n\t\t\tnot in option\n\033[1;0m");
+
     			while (getchar() != '\n');           // Clear the input buffer (consume remaining characters including newline)
     			wait_clean();						 // Wait for keypress and clear console
     			break;
@@ -918,7 +928,9 @@ void edit_employee(){
 	
 	if(numUsers == 1){
     	
+
     	printf("\033[1;31m\n\n\tNo Employees registered.\033[1;0m\n");
+
     	wait_clean();
     	return;
 	}
@@ -935,7 +947,9 @@ void edit_employee(){
     	// Check if there are any user account 
     	if (numUsers == 1) {
     	
+
         	printf("\033[1;31m\n\n\tNo Employees registered.\033[1;0m\n");
+
         	
     	} else {
     		
@@ -971,7 +985,9 @@ void edit_employee(){
     	printf("|________________________________________________________|\n");
     	// hanggang DITO!
     	
+
     	printf("\033[1;36m\tEnter: \033[1;0m");
+
     	scanf("%d", &choice);
     
     	switch (choice){
@@ -1022,7 +1038,9 @@ void edit_salary() {
         clean();
 
         if (numUsers == 1) {
+
             printf("\033[1;31m\n\n\tNo Employees registered.\033[1;0m\n");
+
             wait_clean();
             return;
         }
@@ -1046,12 +1064,16 @@ void edit_salary() {
         printf("=================================================================================================================================================\n");
 
         // Prompt for employee ID to change details
+
         printf("\n\033[1;36mEnter the ID of the employee whose details you want to change: \033[1;0m");
+
         scanf("%d", &id);
 
         // Validate ID
         if (id < 1 || id >= numUsers) {  // Adjusted to start ID from 1 and ensure it's within the valid range
+
             printf("\033[1;31m\nInvalid employee ID.\n\033[1;0m");
+
             wait_clean();
             return;
         }
@@ -1070,7 +1092,9 @@ void edit_salary() {
     printf("|                                                        |\n");
     printf("|________________________________________________________|\n\n");
 
+
     printf("\033[1;36m\n\tEnter your choice: \033[1;0m");
+
     scanf("%d", &choice);
 
     // Validate choice and update the corresponding detail
@@ -1079,9 +1103,11 @@ void edit_salary() {
             // Loop to get a valid number of hours worked
             do {
                 // Prompt for total number of hours worked
+
                 printf("\033[1;36m\tEnter Total number of hours worked (in a month, 1-170): \033[1;0m");
                 if (scanf("%f", &new_value) != 1 || new_value < 1 || new_value > 170) {
                     printf("\033[1;36m\n\tInvalid input. Please enter a valid number of hours (1-170).\033[1;0m\n");
+
                     while (getchar() != '\n'); // Clear input buffer
                     wait_clean();
                     continue;
@@ -1095,9 +1121,11 @@ void edit_salary() {
             // Loop to get a valid number of overtime hours worked
             do {
                 // Prompt for total number of overtime hours worked
+
                 printf("\033[1;36m\tEnter Total number of overtime hours worked (in a month, 1-80): \033[1;0m");
                 if (scanf("%f", &new_value) != 1 || new_value < 1 || new_value > 80) {
                     printf("\033[1;31m\n\tInvalid input. Please enter a valid number of overtime hours (1-80).\033[1;0m\n");
+
                     while (getchar() != '\n'); // Clear input buffer
                     wait_clean();
                     continue;
@@ -1108,20 +1136,26 @@ void edit_salary() {
             break;
 
         case 3:
+
             printf("\033[1;36m\nEnter new Bonus:\033[1;0m ");
+
             scanf("%f", &new_value);
             users[id].bonus = new_value;
             printf("\nBonus updated successfully for employee '%s'.\n", users[id].usernames);
             break;
 
         case 9:
+
             printf("\033[1;31m\nOperation Cancelled\033[1;0m\n");
+
             wait_clean();
             return;
 
         default:
             clean();
+
             printf("\033[1;31m\n\t\t\tnot in option\033[1;0m\n");
+
             while (getchar() != '\n'); // Clear the input buffer (consume remaining characters including newline)
             wait_clean(); // Wait for keypress and clear console
             return;
@@ -1144,11 +1178,13 @@ void edit_all_salary() {
     do {
         clean();
 
+
         if (numUsers == 1) {
             printf("\033[1;31m\n\n\tNo Employees registered.\033[1;0m\n");
             wait_clean();
             return;
         }
+
 
         printf("\nEmployee List:\n");
         printf("=================================================================================================================================================\n");
@@ -1169,12 +1205,16 @@ void edit_all_salary() {
         printf("=================================================================================================================================================\n");
 
         // Prompt for employee ID to change details
+
         printf("\033[1;36m\nEnter the ID of the employee whose details you want to change:\033[1;0m ");
+
         scanf("%d", &id);
 
         // Validate ID
         if (id < 1 || id >= numUsers) {  // Adjusted to start ID from 1 and ensure it's within the valid range
+
             printf("\033[1;31m\nInvalid employee ID.\033[1;0m\n");
+
             wait_clean();
             return;
         }
@@ -1184,9 +1224,11 @@ void edit_all_salary() {
         // Loop to get a valid number of hours worked
         do {
             // Prompt for total number of hours worked
+
             printf("\033[1;36m\tEnter Total number of hours worked (in a month, 1-170):\033[1;0m ");
             if (scanf("%f", &users[id].work_hours) != 1 || users[id].work_hours < 1 || users[id].work_hours > 170) {
                 printf("\033[1;31m\n\tInvalid input. Please enter a valid number of hours (1-170).\033[1;0m\n");
+
                 while (getchar() != '\n'); // Clear input buffer
                 wait_clean();
                 continue;
@@ -1196,9 +1238,11 @@ void edit_all_salary() {
         // Loop to get a valid number of overtime hours worked
         do {
             // Prompt for total number of overtime hours worked
+
             printf("\033[1;36m\tEnter Total number of overtime hours worked (in a month, 1-80): \033[1;0m");
             if (scanf("%f", &users[id].overtime_hours) != 1 || users[id].overtime_hours < 1 || users[id].overtime_hours > 80) {
                 printf("\033[1;31m\n\tInvalid input. Please enter a valid number of overtime hours (1-80).\033[1;0m\n");
+
                 while (getchar() != '\n'); // Clear input buffer
                 wait_clean();
                 continue;
@@ -1207,9 +1251,11 @@ void edit_all_salary() {
         
         // Prompt for total bonuses (one-time validation)
         do {
+
             printf("\033[1;36m\tEnter Total Bonuses (in a month): \033[1;0m");
             if (scanf("%f", &users[id].bonus) != 1) {
                 printf("\033[1;31m\n\tInvalid input. Please enter a valid bonus amount.\033[1;0m\n");
+
                 while (getchar() != '\n'); // Clear input buffer
                 wait_clean();
                 continue;
@@ -1247,7 +1293,9 @@ void delete_employee() {
 
     // Display employee list with IDs
     if (numUsers == 1) {
+
         printf("\033[1;31m\n\n\tNo Employees registered.\033[1;0m\n");
+
     } else {
         // Display employee list
         printf("\nEmployee List:\n");
@@ -1275,7 +1323,9 @@ void delete_employee() {
         getchar(); // Consume the newline character left in the input buffer
 
         if(id == 0){
+
             printf("\033[1;31m\n\tOperation Cancelled\n\033[1;0m");
+
             wait_clean();
             return;
         }
@@ -1284,7 +1334,9 @@ void delete_employee() {
         if (id >= 0 && id < numUsers) {
             // Check if the selected user is the admin
             if (strcmp(users[id].usernames, "admin") == 0) {
+
                 printf("\033[1;31m\n\tYou cannot delete the admin account.\033[1;0m\n");
+
             } else {
                 // Shift elements to remove the selected employee
                 for (i = id; i < numUsers - 1; i++) {
@@ -1299,7 +1351,9 @@ void delete_employee() {
                 printf("\nChanges saved successfully.\n");
             }
         } else {
+
             printf("\033[1;31m\n\tInvalid employee ID.\033[1;0m\n");
+
         }
     }
 
@@ -1469,7 +1523,9 @@ void add_employee() {
         users[numUsers] = new_user;
         numUsers++;
         
+
         printf("\033[1;33m\tRegistration successful.\033[1;0m\n");
+
         
         // Save the updated users array to CSV
         writeUsersToCSV(USERS, users, numUsers);
